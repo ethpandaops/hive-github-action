@@ -107,13 +107,13 @@ runs:
       shell: bash
       run: |
         set -x
-        ./hive \
+        (./hive \
           --sim "${{ inputs.simulator }}" \
           --client "${{ inputs.client }}" \
           --results-root /results \
           ${CLIENT_CONFIG_FLAG:-} \
           ${{ inputs.extra_flags }} \
-          | tee hive.log
+          || true )| tee hive.log
 
         # Check the last 10 lines of the log for the success message
         if tail -n 10 hive.log | grep -q "simulation .* finished"; then
