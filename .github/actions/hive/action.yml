@@ -113,7 +113,7 @@ runs:
           --results-root /results \
           ${CLIENT_CONFIG_FLAG:-} \
           ${{ inputs.extra_flags }} \
-          || true )| tee hive.log
+           2>&1 || true ) | tee hive.log
 
         # Check the last 10 lines of the log for the success message
         if tail -n 10 hive.log | grep -q "simulation .* finished"; then
