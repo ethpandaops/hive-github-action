@@ -133,7 +133,7 @@ runs:
       if: ${{ always() && inputs.workflow_artifact_upload == 'true' && env.RUN_SUCCESS == 'true' }}
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ inputs.workflow_artifact_name != '' && inputs.workflow_artifact_name || format('{0}-{1}', inputs.simulator, inputs.client) }}
+        name: ${{ inputs.workflow_artifact_name != '' && inputs.workflow_artifact_name || format('{0}-{1}', inputs.simulator.replace('/', '-'), inputs.client) }}
         path: /results
 
     - name: Setup Rclone
