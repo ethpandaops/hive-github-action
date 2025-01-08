@@ -52,16 +52,17 @@ inputs:
     required: false
     type: string
     default: 'hive-results'
-  rclone_version:
-    description: 'Rclone version to use'
-    required: false
-    type: string
-    default: 'latest'
   rclone_config:
     description: 'Rclone config file'
     required: false
     type: string
     default: '' # Should be base64 encoded. Example: base64 -w 0 rclone.conf
+  rclone_version:
+    description: 'Rclone version to use'
+    required: false
+    type: string
+    default: 'latest'
+
   # Workflow artifact upload
   workflow_artifact_upload:
     description: 'Upload test results as an workflow artifact'
@@ -80,6 +81,7 @@ runs:
       uses: actions/setup-go@v4
       with:
         go-version: ${{ inputs.go_version }}
+        cache: false
 
     - name: Checkout hive
       uses: actions/checkout@v4
