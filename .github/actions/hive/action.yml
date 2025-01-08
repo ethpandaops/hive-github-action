@@ -157,7 +157,7 @@ runs:
       uses: AnimMouse/setup-rclone@e4c62ff5f942e489edceaffb563832d970253322
       with:
         rclone_config: ${{ inputs.rclone_config }}
-        rclone_version: ${{ inputs.rclone_version }}
+        version: ${{ inputs.rclone_version }}
 
     - name: Upload results to S3
       if: ${{ inputs.s3_upload == 'true' && env.RUN_SUCCESS == 'true' }}
