@@ -1,0 +1,58 @@
+name: Pectra Devnet 5
+on:
+  push:
+    branches:
+      - init
+
+env:
+  GLOBAL_EXTRA_FLAGS: >-
+    --sim.buildarg fixtures=https://github.com/ethereum/execution-spec-tests/releases/download/pectra-devnet-5%40v1.1.0/fixtures_pectra-devnet-5.tar.gz
+    --sim.buildarg branch=pectra-devnet-5
+    --client.checktimelimit=60s
+    --sim.parallelism=4
+  CLIENT_CONFIG: |
+    - client: go-ethereum
+      nametag: prague-devnet-5
+      dockerfile: git
+      build_args:
+        github: s1na/go-ethereum
+        tag: prague-devnet-5
+    - client: besu
+      nametag: prague-devnet-5
+      dockerfile: git
+      build_args:
+        github: siladu/besu
+        tag: pectra-devnet-5-interop
+    - client: reth
+      nametag: main
+      dockerfile: git
+      build_args:
+        github: paradigmxyz/reth
+        tag: main
+    - client: nethermind
+      nametag: main
+      dockerfile: git
+      build_args:
+        github: NethermindEth/nethermind
+        tag: pectra-devnet-5
+    - client: erigon
+      nametag: pectra5
+      build_args:
+        baseimage: erigontech/erigon
+        tag: pectra5
+
+jobs:
+  rpc-compat:
+    runs-on: self-hosted-ghr-size-m-x64
+    strategy:
+      matrix:
+        client: [go-ethereum, besu, reth, nethermind, erigon]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/hive
+        with:
+          client: ${{ matrix.client }}
+          simulator: ethereum/rpc-compat
+          client_config: ${{ env.CLIENT_CONFIG }}
+          extra_flags: ${{ env.GLOBAL_EXTRA_FLAGS }}
+          upload_result_artifact: true

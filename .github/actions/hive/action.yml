@@ -1,0 +1,130 @@
+name: Ethereum Hive
+
+description: Run Ethereum Hive tests with a given client and simulator
+
+inputs:
+  # Test configuration
+  simulator:
+    description: 'Simulator to run (e.g. ethereum/sync)'
+    required: true
+    type: string
+    default: 'ethereum/sync'
+  client:
+    description: 'Client to test'
+    required: true
+    type: string
+    default: 'go-ethereum'
+  client_config:
+    description: 'Client configuration in YAML format'
+    required: false
+    type: string
+  extra_flags:
+    description: 'Additional flags for hive'
+    required: false
+    type: string
+  # Hive configuration
+  hive_repository:
+    description: 'Hive repository to use'
+    required: false
+    type: string
+    default: 'ethereum/hive'
+  hive_version:
+    description: 'Hive version/branch to use'
+    required: false
+    type: string
+    default: 'master'
+  go_version:
+    description: 'Go version used to build hive'
+    required: false
+    type: string
+    default: '1.21'
+  ## S3 upload using rclone
+  s3_upload:
+    description: 'Upload test results to S3'
+    required: false
+    default: 'false'
+  s3_bucket:
+    description: 'S3 bucket name'
+    required: false
+    type: string
+  s3_path:
+    description: 'Path prefix in S3 bucket'
+    required: false
+    type: string
+    default: 'hive-results'
+  rclone_version:
+    description: 'Rclone version to use'
+    required: false
+    type: string
+    default: 'latest'
+  rclone_config:
+    description: 'Rclone config file'
+    required: false
+    type: string
+    default: '' # Should be base64 encoded. Example: base64 -w 0 rclone.conf
+  # Workflow artifact upload
+  upload_result_artifact:
+    description: 'Upload test results as an workflow artifact'
+    required: false
+    default: 'false'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Install go
+      uses: actions/setup-go@v4
+      with:
+        go-version: ${{ inputs.go_version }}
+
+    - name: Checkout hive
+      uses: actions/checkout@v4
+      with:
+        repository: ethereum/hive
+        ref: ${{ inputs.hive_version }}
+        path: ./src
+
+    - name: Build hive
+      working-directory: ./src
+      run: |
+        go build -o hive .
+        go build -o hiveview ./cmd/hiveview
+
+    - name: Create results directory
+      run: mkdir -p /results
+
+    - name: Setup client config
+      if: inputs.client_config != ''
+      working-directory: ./src
+      run: |
+        echo "${{ inputs.client_config }}" > client-config.yaml
+        echo "CLIENT_CONFIG_FLAG=--client-file=client-config.yaml" >> $GITHUB_ENV
+
+    - name: Run hive tests
+      working-directory: ./src
+      run: |
+        set -x
+        ./hive \
+          --sim "${{ inputs.simulator }}" \
+          --client "${{ inputs.client }}" \
+          --results-root /results \
+          ${CLIENT_CONFIG_FLAG:-} \
+          ${{ inputs.extra_flags }}
+
+    - name: Upload test results as workflow artifact
+      if: ${{ always() && inputs.upload_result_artifact == 'true' }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: hive-results
+        path: /results
+
+    - name: Setup Rclone
+      if: ${{ inputs.s3_upload == 'true' }}
+      uses: AnimMouse/setup-rclone@e4c62ff5f942e489edceaffb563832d970253322
+      with:
+        rclone_config: ${{ inputs.rclone_config }}
+        rclone_version: ${{ inputs.rclone_version }}
+
+    - name: Upload results to S3
+      if: ${{ inputs.s3_upload == 'true' }}
+      run: |
+        rclone copy --no-traverse /results s3:${{ inputs.s3_bucket }}/${{ inputs.s3_path }}
