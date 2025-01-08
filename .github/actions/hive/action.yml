@@ -85,6 +85,7 @@ runs:
 
     - name: Build hive
       working-directory: ./src
+      shell: bash
       run: |
         go build -o hive .
         go build -o hiveview ./cmd/hiveview
