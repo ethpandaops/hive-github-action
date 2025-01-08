@@ -112,24 +112,34 @@ runs:
           --client "${{ inputs.client }}" \
           --results-root /results \
           ${CLIENT_CONFIG_FLAG:-} \
-          ${{ inputs.extra_flags }}
+          ${{ inputs.extra_flags }} \
+          | tee hive.log
+
+        # Check the last 10 lines of the log for the success message
+        if tail -n 10 hive.log | grep -q "simulation .* finished"; then
+          echo "RUN_SUCCESS=true" >> $GITHUB_ENV
+          exit 0
+        else
+          echo "RUN_SUCCESS=false" >> $GITHUB_ENV
+          exit 1
+        fi
 
     - name: Upload test results as workflow artifact
-      if: ${{ always() && inputs.upload_result_artifact == 'true' }}
+      if: ${{ always() && inputs.upload_result_artifact == 'true' && env.RUN_SUCCESS == 'true' }}
       uses: actions/upload-artifact@v4
       with:
         name: hive-results
         path: /results
 
     - name: Setup Rclone
-      if: ${{ inputs.s3_upload == 'true' }}
+      if: ${{ inputs.s3_upload == 'true' && env.RUN_SUCCESS == 'true' }}
       uses: AnimMouse/setup-rclone@e4c62ff5f942e489edceaffb563832d970253322
       with:
         rclone_config: ${{ inputs.rclone_config }}
         rclone_version: ${{ inputs.rclone_version }}
 
     - name: Upload results to S3
-      if: ${{ inputs.s3_upload == 'true' }}
+      if: ${{ inputs.s3_upload == 'true' && env.RUN_SUCCESS == 'true' }}
       shell: bash
       run: |
         rclone copy --no-traverse /results s3:${{ inputs.s3_bucket }}/${{ inputs.s3_path }}
