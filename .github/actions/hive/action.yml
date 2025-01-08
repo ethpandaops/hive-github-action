@@ -129,11 +129,25 @@ runs:
           exit 1
         fi
 
+    - name: Set artifact name
+      if: ${{ inputs.workflow_artifact_upload == 'true' && env.RUN_SUCCESS == 'true' }}
+      shell: bash
+      run: |
+        if [ -n "${{ inputs.workflow_artifact_name }}" ]; then
+          echo "WORKFLOW_ARTIFACT_NAME=${{ inputs.workflow_artifact_name }}" >> $GITHUB_ENV
+        else
+          SIMULATOR_NAME=${{ inputs.simulator }}
+          # replace / in simulator name with -
+          SIMULATOR_NAME=${{ SIMULATOR_NAME//\//- }}
+          CLIENT_NAME=${{ inputs.client }}
+          echo "WORKFLOW_ARTIFACT_NAME=$SIMULATOR_NAME-$CLIENT_NAME" >> $GITHUB_ENV
+        fi
+
     - name: Upload test results as workflow artifact
-      if: ${{ always() && inputs.workflow_artifact_upload == 'true' && env.RUN_SUCCESS == 'true' }}
+      if: ${{ inputs.workflow_artifact_upload == 'true' && env.RUN_SUCCESS == 'true' }}
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ inputs.workflow_artifact_name != '' && inputs.workflow_artifact_name || format('{0}-{1}', inputs.simulator.replace('/', '-'), inputs.client) }}
+        name: ${{ env.WORKFLOW_ARTIFACT_NAME }}
         path: /results
 
     - name: Setup Rclone
