@@ -76,7 +76,7 @@ Then you can use the `CLIENT_CONFIG` environment variable in your workflow.
     client_config: ${{ env.CLIENT_CONFIG }}
 ```
 
-### With S3 Upload
+### Uploading the results directory to S3
 
 You'll need to create an rclone config and base64 encode it. Then store it as a github actions secret on your repository.
 
@@ -110,7 +110,7 @@ Afterwards you just need to reference the secret for the `rclone_config` input.
     rclone_config: ${{ secrets.RCLONE_CONFIG }}
 ```
 
-### With GitHub Workflow Artifact
+### Uploading the results directory as an GitHub workflow artifact
 
 This will upload the test results as a workflow artifact. By default the name will be the simulator and client name. You can override this by providing a `workflow_artifact_name` input.
 ```yaml

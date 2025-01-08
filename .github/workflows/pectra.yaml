@@ -58,7 +58,7 @@ jobs:
         client: [go-ethereum]
     steps:
       - uses: actions/checkout@v4
-      #- uses: ./.github/actions/install-gh-cli
+      - uses: ./.github/actions/install-deps
       - uses: ./.github/actions/hive
         with:
           client: ${{ matrix.client }}
