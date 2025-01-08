@@ -137,8 +137,8 @@ runs:
           echo "WORKFLOW_ARTIFACT_NAME=${{ inputs.workflow_artifact_name }}" >> $GITHUB_ENV
         else
           SIMULATOR_NAME=${{ inputs.simulator }}
-          # replace / in simulator name with -
-          SIMULATOR_NAME=${{ SIMULATOR_NAME//\//- }}
+          # replace / in simulator name with - because artifact names cannot contain /
+          SIMULATOR_NAME="${SIMULATOR_NAME//\//-}"
           CLIENT_NAME=${{ inputs.client }}
           echo "WORKFLOW_ARTIFACT_NAME=$SIMULATOR_NAME-$CLIENT_NAME" >> $GITHUB_ENV
         fi
