@@ -46,7 +46,7 @@ jobs:
     runs-on: self-hosted-ghr-size-m-x64
     concurrency:
       group: >-
-        ${{ github.head_ref }}-ethereum-node-${{ matrix.consensus }}-${{ matrix.execution }}
+        ${{ github.head_ref }}-${{ matrix.client }}-rpc-compat
       cancel-in-progress: true
     strategy:
       fail-fast: false
