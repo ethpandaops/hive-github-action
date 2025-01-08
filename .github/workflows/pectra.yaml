@@ -61,3 +61,43 @@ jobs:
           client_config: ${{ env.CLIENT_CONFIG }}
           extra_flags: ${{ env.GLOBAL_EXTRA_FLAGS }}
           workflow_artifact_upload: true
+
+  eest-consume-engine:
+    runs-on: self-hosted-ghr-size-l-x64
+    concurrency:
+      group: >-
+        ${{ github.head_ref }}-${{ matrix.client }}-eest-consume-engine
+      cancel-in-progress: true
+    strategy:
+      fail-fast: false
+      matrix:
+        client: [go-ethereum,reth]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/hive
+        with:
+          client: ${{ matrix.client }}
+          simulator: ethereum/eest/consume-engine
+          client_config: ${{ env.CLIENT_CONFIG }}
+          extra_flags: ${{ env.GLOBAL_EXTRA_FLAGS }}
+          workflow_artifact_upload: true
+
+  eest-consume-rlp:
+    runs-on: self-hosted-ghr-size-l-x64
+    concurrency:
+      group: >-
+        ${{ github.head_ref }}-${{ matrix.client }}-eest-consume-rlp
+      cancel-in-progress: true
+    strategy:
+      fail-fast: false
+      matrix:
+        client: [go-ethereum,reth]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/hive
+        with:
+          client: ${{ matrix.client }}
+          simulator: ethereum/eest/consume-rlp
+          client_config: ${{ env.CLIENT_CONFIG }}
+          extra_flags: ${{ env.GLOBAL_EXTRA_FLAGS }}
+          workflow_artifact_upload: true
