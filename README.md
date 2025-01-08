@@ -37,7 +37,8 @@ This action is a wrapper around [Ethereum Hive](https://github.com/ethereum/hive
 
 | Input | Description | Required | Default |
 |-------|-------------|----------|---------|
-| `upload_result_artifact` | Upload test results as a workflow artifact | No | `false` |
+| `workflow_artifact_upload` | Upload test results as a workflow artifact | No | `false` |
+| `workflow_artifact_name` | Name of the workflow artifact. If not provided, the name will be the simulator and client name. | No | - |
 
 ## Examples
 
@@ -96,5 +97,9 @@ Then you can use the `CLIENT_CONFIG` environment variable in your workflow.
   with:
     client: go-ethereum
     simulator: ethereum/sync
-    upload_result_artifact: true
+    workflow_artifact_upload: true
 ```
+
+## License
+
+Refer to the repository's license file for information on the licensing of this GitHub Action and the associated software.
