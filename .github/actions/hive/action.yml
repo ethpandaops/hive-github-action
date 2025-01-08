@@ -63,10 +63,15 @@ inputs:
     type: string
     default: '' # Should be base64 encoded. Example: base64 -w 0 rclone.conf
   # Workflow artifact upload
-  upload_result_artifact:
+  workflow_artifact_upload:
     description: 'Upload test results as an workflow artifact'
     required: false
     default: 'false'
+  workflow_artifact_name:
+    description: 'Name of the workflow artifact. If not provided, the name will be the simulator and client name.'
+    required: false
+    type: string
+    default: ''
 
 runs:
   using: 'composite'
@@ -125,10 +130,10 @@ runs:
         fi
 
     - name: Upload test results as workflow artifact
-      if: ${{ always() && inputs.upload_result_artifact == 'true' && env.RUN_SUCCESS == 'true' }}
+      if: ${{ always() && inputs.workflow_artifact_upload == 'true' && env.RUN_SUCCESS == 'true' }}
       uses: actions/upload-artifact@v4
       with:
-        name: hive-results
+        name: ${{ inputs.workflow_artifact_name != '' && inputs.workflow_artifact_name || inputs.simulator + '-' + inputs.client }}
         path: /results
 
     - name: Setup Rclone

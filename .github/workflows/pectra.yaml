@@ -60,4 +60,4 @@ jobs:
           simulator: ethereum/rpc-compat
           client_config: ${{ env.CLIENT_CONFIG }}
           extra_flags: ${{ env.GLOBAL_EXTRA_FLAGS }}
-          upload_result_artifact: true
+          workflow_artifact_upload: true
