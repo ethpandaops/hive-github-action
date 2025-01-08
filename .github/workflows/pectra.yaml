@@ -56,7 +56,7 @@ jobs:
         client: [go-ethereum, besu, reth, nethermind, erigon]
     steps:
       - uses: actions/checkout@v4
-      - uses: actions4gh/setup-gh@44a12005484c53be5bf51bebe8c985b4be8ba8de # v1.0.2
+      - uses: ./.github/actions/install-gh-cli
       - uses: ./.github/actions/hive
         with:
           client: ${{ matrix.client }}
