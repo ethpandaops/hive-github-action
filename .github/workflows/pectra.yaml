@@ -44,7 +44,12 @@ env:
 jobs:
   rpc-compat:
     runs-on: self-hosted-ghr-size-m-x64
+    concurrency:
+      group: >-
+        ${{ github.head_ref }}-ethereum-node-${{ matrix.consensus }}-${{ matrix.execution }}
+      cancel-in-progress: true
     strategy:
+      fail-fast: false
       matrix:
         client: [go-ethereum, besu, reth, nethermind, erigon]
     steps:

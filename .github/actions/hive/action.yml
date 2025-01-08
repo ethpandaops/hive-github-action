@@ -90,17 +90,20 @@ runs:
         go build -o hiveview ./cmd/hiveview
 
     - name: Create results directory
+      shell: bash
       run: mkdir -p /results
 
     - name: Setup client config
       if: inputs.client_config != ''
       working-directory: ./src
+      shell: bash
       run: |
         echo "${{ inputs.client_config }}" > client-config.yaml
         echo "CLIENT_CONFIG_FLAG=--client-file=client-config.yaml" >> $GITHUB_ENV
 
     - name: Run hive tests
       working-directory: ./src
+      shell: bash
       run: |
         set -x
         ./hive \
@@ -126,5 +129,6 @@ runs:
 
     - name: Upload results to S3
       if: ${{ inputs.s3_upload == 'true' }}
+      shell: bash
       run: |
         rclone copy --no-traverse /results s3:${{ inputs.s3_bucket }}/${{ inputs.s3_path }}
