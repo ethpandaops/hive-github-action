@@ -7,7 +7,7 @@ on:
 env:
   S3_BUCKET: hive-results
   S3_PATH: pectra-devnet-5
-  RCLONE_VERSION: 1.68.2
+  RCLONE_VERSION: v1.68.2
   GLOBAL_EXTRA_FLAGS: >-
     --sim.buildarg fixtures=https://github.com/ethereum/execution-spec-tests/releases/download/pectra-devnet-5%40v1.1.0/fixtures_pectra-devnet-5.tar.gz
     --sim.buildarg branch=pectra-devnet-5
