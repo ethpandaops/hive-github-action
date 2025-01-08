@@ -78,6 +78,26 @@ Then you can use the `CLIENT_CONFIG` environment variable in your workflow.
 
 ### With S3 Upload
 
+You'll need to create an rclone config and base64 encode it. Then store it as a github actions secret on your repository.
+
+An example rclone config could look like this:
+
+```toml
+# Content of rclone.conf
+[s3]
+type = s3
+provider = Cloudflare
+region = auto
+endpoint = https://your-r2-account-id.r2.cloudflarestorage.com
+access_key_id = your-access-key-id
+secret_access_key = your-secret-access-key
+no_check_bucket = true
+```
+
+Then you can run `base64 -w 0 rclone.conf` and store the output as a github actions secret.
+
+Afterwards you just need to reference the secret for the `rclone_config` input.
+
 ```yaml
 - uses: ./.github/actions/hive
   with:
@@ -92,12 +112,14 @@ Then you can use the `CLIENT_CONFIG` environment variable in your workflow.
 
 ### With GitHub Workflow Artifact
 
+This will upload the test results as a workflow artifact. By default the name will be the simulator and client name. You can override this by providing a `workflow_artifact_name` input.
 ```yaml
 - uses: ./.github/actions/hive
   with:
     client: go-ethereum
     simulator: ethereum/sync
     workflow_artifact_upload: true
+    # workflow_artifact_name: my-custom-name
 ```
 
 ## License
