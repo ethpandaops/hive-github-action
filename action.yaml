@@ -208,7 +208,6 @@ runs:
         echo "<summary>client-config.yaml</summary>" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "\`\`\`yaml" >> $GITHUB_STEP_SUMMARY
-        echo "# client-config.yaml" >> $GITHUB_STEP_SUMMARY
         echo "${{ inputs.client_config }}" >> $GITHUB_STEP_SUMMARY
         echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
