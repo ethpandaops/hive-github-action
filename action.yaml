@@ -188,3 +188,22 @@ runs:
         rclone copy --progress --transfers=100 --include "*.json" s3://${{ inputs.s3_bucket }}/${{ inputs.s3_path }}/results tmp_results
         ./hiveview --listing --logdir tmp_results > listing.jsonl
         rclone copy listing.jsonl s3:${{ inputs.s3_bucket }}/${{ inputs.s3_path }}/
+
+    - name: Generate summary
+      shell: bash
+      run: |
+        echo "# 🐝 Summary" >> $GITHUB_STEP_SUMMARY
+        # Add the command executed
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "## Command" >> $GITHUB_STEP_SUMMARY
+        echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+        echo "./hive --sim \"${{ inputs.simulator }}\" --client \"${{ inputs.client }}\" --results-root results ${CLIENT_CONFIG_FLAG:-} ${{ inputs.extra_flags }}" >> $GITHUB_STEP_SUMMARY
+        echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+
+    - name: Generate summary for s3 upload
+      if: ${{ inputs.s3_upload == 'true' && env.RUN_SUCCESS == 'true' }}
+      shell: bash
+      run: |
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "## S3 Upload:" >> $GITHUB_STEP_SUMMARY
+        echo "s3://${{ inputs.s3_bucket }}/${{ inputs.s3_path }}/results" >> $GITHUB_STEP_SUMMARY
