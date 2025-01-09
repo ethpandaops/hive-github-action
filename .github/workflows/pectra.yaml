@@ -54,8 +54,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        #client: [go-ethereum, besu, reth, nethermind, erigon]
-        client: [go-ethereum]
+        client: [go-ethereum, besu, reth, nethermind, erigon]
+        #client: [go-ethereum]
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/install-deps
