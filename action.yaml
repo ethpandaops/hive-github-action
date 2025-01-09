@@ -195,7 +195,7 @@ runs:
         # Add the command executed
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "## Command" >> $GITHUB_STEP_SUMMARY
-        echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+        echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
         echo "hive --sim \"${{ inputs.simulator }}\" --client \"${{ inputs.client }}\" --results-root results ${CLIENT_CONFIG_FLAG:-} ${{ inputs.extra_flags }}" >> $GITHUB_STEP_SUMMARY
         echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
 
@@ -204,7 +204,18 @@ runs:
       shell: bash
       run: |
         echo "" >> $GITHUB_STEP_SUMMARY
-        echo "## Client config" >> $GITHUB_STEP_SUMMARY
         echo "\`\`\`yaml" >> $GITHUB_STEP_SUMMARY
+        echo "# client-config.yaml" >> $GITHUB_STEP_SUMMARY
         echo "${{ inputs.client_config }}" >> $GITHUB_STEP_SUMMARY
         echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+
+    - name: Convert JSON results to markdown summaries
+      if: env.RUN_SUCCESS == 'true'
+      shell: bash
+      run: |
+        for json_file in src/results/*.json; do
+          if [ -f "$json_file" ]; then
+            ${{ github.action_path }}/scripts/json-result-to-md-summary.sh "$json_file"
+            cat "${json_file%.*}.md" >> $GITHUB_STEP_SUMMARY
+          fi
+        done
