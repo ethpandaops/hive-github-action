@@ -206,7 +206,7 @@ runs:
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "\`\`\`yaml" >> $GITHUB_STEP_SUMMARY
         echo "# client-config.yaml" >> $GITHUB_STEP_SUMMARY
-        echo "${{ inputs.client_config }}" | yq ".[] | select(.client == \"${{ inputs.client }}\")" >> $GITHUB_STEP_SUMMARY
+        echo "${{ inputs.client_config }}" | yq -o yaml "[.[] | select(.client == \"${{ inputs.client }}\")]" >> $GITHUB_STEP_SUMMARY
         echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
 
     - name: Convert JSON results to markdown summaries

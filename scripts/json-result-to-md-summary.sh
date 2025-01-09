@@ -17,8 +17,7 @@ json_file="$1"
 # Convert JSON to markdown using jq
 {
     echo "## Test: $(jq -r .name "$json_file")"
-    echo
-    echo "$(jq -r .description "$json_file")"
+    echo "<details><summary>Description</summary>$(jq -r .description "$json_file")</details>"
     echo
     echo "### Client Versions"
     jq -r '.clientVersions | to_entries[] | "- **\(.key)**: \(.value)"' "$json_file"
