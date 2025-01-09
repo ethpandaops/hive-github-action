@@ -214,7 +214,7 @@ runs:
       shell: bash
       run: |
         set -x
-        ls -lah $GITHUB_ACTION_PATH/scripts/
+        ls -lah $GITHUB_ACTION_PATH/
         for json_file in src/results/*.json; do
           if [ -f "$json_file" ] && [[ "$json_file" != *"hive.json" ]]; then
             $GITHUB_ACTION_PATH/scripts/json-result-to-md-summary.sh "$json_file"
