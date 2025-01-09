@@ -1,4 +1,4 @@
-# Ethereum Hive Github Action
+# Ethereum Hive 🐝 Github Action
 
 This action is a wrapper around [Ethereum Hive](https://github.com/ethereum/hive). It allows you to run tests with different clients and simulators. It also supports uploading test results to S3 and/or as a workflow artifact.
 
