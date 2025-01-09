@@ -15,4 +15,4 @@ runs:
     - name: Install apt packages
       shell: bash
       run: |
-        apt update && apt install -y unzip gh
+        apt update && apt install -y unzip gh yq

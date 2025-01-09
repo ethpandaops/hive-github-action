@@ -2,7 +2,7 @@ name: Pectra Devnet 5
 on:
   push:
     branches:
-      - disabled
+      - init
 
 env:
   S3_BUCKET: hive-results

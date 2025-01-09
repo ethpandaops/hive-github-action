@@ -16,7 +16,7 @@ json_file="$1"
 
 # Convert JSON to markdown using jq
 {
-    echo "## $(jq -r .name "$json_file") Test Results"
+    echo "## Test: $(jq -r .name "$json_file")"
     echo
     echo "$(jq -r .description "$json_file")"
     echo
@@ -25,7 +25,7 @@ json_file="$1"
     echo
     echo "### Test Summary"
     echo
-    echo "| Total Tests | ✅ Passed | ❌ Failed |"
+    echo "| Total | ✅ | ❌ |"
     echo "|-------------|-----------|-----------|"
     echo "| $(jq -r '.testCases | length' "$json_file") | $(jq -r '[.testCases[].summaryResult.pass] | map(select(. == true)) | length' "$json_file") | $(jq -r '[.testCases[].summaryResult.pass] | map(select(. == false)) | length' "$json_file") |"
     echo
