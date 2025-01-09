@@ -121,6 +121,19 @@ This will upload the test results as a workflow artifact. By default the artifac
     workflow_artifact_upload: true
     # workflow_artifact_prefix: my-custom-prefix
 ```
+## Local testing and development
+
+To test the action locally, you can run [act](https://github.com/nektos/act) with the following command:
+
+```bash
+act -s GITHUB_TOKEN="$(gh auth token)" -W '.github/workflows/test.yaml'
+```
+
+Or if you configured a custom runner, you can run `act` with the following command:
+
+```bash
+act -s GITHUB_TOKEN="$(gh auth token)" -W '.github/workflows/your-workflow.yaml' -P your-self-hosted-runner=catthehacker/ubuntu:act-latest
+```
 
 ## License
 
