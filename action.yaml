@@ -62,14 +62,13 @@ inputs:
     required: false
     type: string
     default: 'latest'
-
   # Workflow artifact upload
   workflow_artifact_upload:
     description: 'Upload test results as an workflow artifact'
     required: false
     default: 'false'
-  workflow_artifact_name:
-    description: 'Name of the workflow artifact. If not provided, the name will be the simulator and client name.'
+  workflow_artifact_prefix:
+    description: 'Prefix for the workflow artifacts. If not provided, the prefix will be the simulator and client name.'
     required: false
     type: string
     default: ''
@@ -98,8 +97,9 @@ runs:
         go build -o hiveview ./cmd/hiveview
 
     - name: Create results directory
+      working-directory: ./src
       shell: bash
-      run: mkdir -p /results
+      run: mkdir -p results
 
     - name: Setup client config
       if: inputs.client_config != ''
@@ -117,7 +117,7 @@ runs:
         (./hive \
           --sim "${{ inputs.simulator }}" \
           --client "${{ inputs.client }}" \
-          --results-root /results \
+          --results-root results \
           ${CLIENT_CONFIG_FLAG:-} \
           ${{ inputs.extra_flags }} \
            2>&1 || true ) | tee hive.log
@@ -135,22 +135,29 @@ runs:
       if: ${{ inputs.workflow_artifact_upload == 'true' && env.RUN_SUCCESS == 'true' }}
       shell: bash
       run: |
-        if [ -n "${{ inputs.workflow_artifact_name }}" ]; then
-          echo "WORKFLOW_ARTIFACT_NAME=${{ inputs.workflow_artifact_name }}" >> $GITHUB_ENV
+        if [ -n "${{ inputs.workflow_artifact_prefix }}" ]; then
+          echo "WORKFLOW_ARTIFACT_PREFIX=${{ inputs.workflow_artifact_prefix }}" >> $GITHUB_ENV
         else
           SIMULATOR_NAME=${{ inputs.simulator }}
           # replace / in simulator name with - because artifact names cannot contain /
           SIMULATOR_NAME="${SIMULATOR_NAME//\//-}"
           CLIENT_NAME=${{ inputs.client }}
-          echo "WORKFLOW_ARTIFACT_NAME=$SIMULATOR_NAME-$CLIENT_NAME" >> $GITHUB_ENV
+          echo "WORKFLOW_ARTIFACT_PREFIX=$SIMULATOR_NAME-$CLIENT_NAME" >> $GITHUB_ENV
         fi
 
     - name: Upload test results as workflow artifact
       if: ${{ inputs.workflow_artifact_upload == 'true' && env.RUN_SUCCESS == 'true' }}
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ env.WORKFLOW_ARTIFACT_NAME }}
-        path: /results
+        name: ${{ env.WORKFLOW_ARTIFACT_PREFIX }}-results.zip
+        path: src/results
+
+    - name: Upload client config as workflow artifact
+      if: ${{ inputs.workflow_artifact_upload == 'true' && env.RUN_SUCCESS == 'true' && inputs.client_config != '' }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ env.WORKFLOW_ARTIFACT_PREFIX }}-client-config.yaml
+        path: src/client-config.yaml
 
     - name: Setup Rclone
       if: ${{ inputs.s3_upload == 'true' && env.RUN_SUCCESS == 'true' }}
@@ -163,4 +170,4 @@ runs:
       if: ${{ inputs.s3_upload == 'true' && env.RUN_SUCCESS == 'true' }}
       shell: bash
       run: |
-        rclone copy --no-traverse /results s3:${{ inputs.s3_bucket }}/${{ inputs.s3_path }}
+        rclone copy --no-traverse src/results s3:${{ inputs.s3_bucket }}/${{ inputs.s3_path }}

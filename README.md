@@ -38,7 +38,7 @@ This action is a wrapper around [Ethereum Hive](https://github.com/ethereum/hive
 | Input | Description | Required | Default |
 |-------|-------------|----------|---------|
 | `workflow_artifact_upload` | Upload test results as a workflow artifact | No | `false` |
-| `workflow_artifact_name` | Name of the workflow artifact. If not provided, the name will be the simulator and client name. | No | - |
+| `workflow_artifact_prefix` | Name of the workflow prefix. If not provided, the prefix will be the simulator and client name. | No | - |
 
 ## Examples
 
@@ -112,14 +112,14 @@ Afterwards you just need to reference the secret for the `rclone_config` input.
 
 ### Uploading the results directory as an GitHub workflow artifact
 
-This will upload the test results as a workflow artifact. By default the name will be the simulator and client name. You can override this by providing a `workflow_artifact_name` input.
+This will upload the test results as a workflow artifact. By default the artifact prefix will be the simulator and client name. You can override this by providing a `workflow_artifact_prefix` input.
 ```yaml
 - uses: ./.github/actions/hive
   with:
     client: go-ethereum
     simulator: ethereum/sync
     workflow_artifact_upload: true
-    # workflow_artifact_name: my-custom-name
+    # workflow_artifact_prefix: my-custom-prefix
 ```
 
 ## License
