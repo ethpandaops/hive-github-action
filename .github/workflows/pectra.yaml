@@ -58,7 +58,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/install-deps
-      - uses: "."
+      - uses: ./
         with:
           client: ${{ matrix.client }}
           simulator: ethereum/rpc-compat
