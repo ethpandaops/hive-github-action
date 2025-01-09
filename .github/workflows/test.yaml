@@ -1,48 +1,19 @@
 name: Hive Tests
 on:
+  pull_request:
+    branches:
+      - master
   push:
     branches:
-      - test
-
-env:
-  CLIENT_CONFIG: |
-    - client: go-ethereum
-      nametag: prague-devnet-5
-      dockerfile: git
-      build_args:
-        github: s1na/go-ethereum
-        tag: prague-devnet-5
-    - client: besu
-      nametag: prague-devnet-5
-      dockerfile: git
-      build_args:
-        github: siladu/besu
-        tag: pectra-devnet-5-interop
-    - client: reth
-      nametag: main
-      dockerfile: git
-      build_args:
-        github: paradigmxyz/reth
-        tag: main
-    - client: nethermind
-      nametag: main
-      dockerfile: git
-      build_args:
-        github: NethermindEth/nethermind
-        tag: pectra-devnet-5
-    - client: erigon
-      nametag: pectra5
-      build_args:
-        baseimage: erigontech/erigon
-        tag: pectra5
+      - master
+      - init
 
 jobs:
   test:
-    runs-on: self-hosted-ghr-size-m-x64
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/hive
         with:
           client: go-ethereum
           simulator: ethereum/sync
-          client_config: ${{ env.CLIENT_CONFIG }}
