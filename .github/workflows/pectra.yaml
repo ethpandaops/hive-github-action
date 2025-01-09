@@ -66,7 +66,7 @@ jobs:
           extra_flags: ${{ env.GLOBAL_EXTRA_FLAGS }}
           s3_upload: true
           s3_bucket: ${{ env.S3_BUCKET }}
-          s3_path: ${{ env.S3_PATH }}/results
+          s3_path: ${{ env.S3_PATH }}
           rclone_config: ${{ secrets.RCLONE_CONFIG }}
           rclone_version: ${{ env.INSTALL_RCLONE_VERSION }}
           workflow_artifact_upload: true
@@ -91,7 +91,7 @@ jobs:
 #          extra_flags: ${{ env.GLOBAL_EXTRA_FLAGS }}
 #          s3_upload: true
 #          s3_bucket: ${{ env.S3_BUCKET }}
-#          s3_path: ${{ env.S3_PATH }}/results
+#          s3_path: ${{ env.S3_PATH }}
 #          rclone_config: ${{ secrets.RCLONE_CONFIG }}
 #          rclone_version: ${{ env.INSTALL_RCLONE_VERSION }}
 #          workflow_artifact_upload: true
@@ -116,7 +116,7 @@ jobs:
 #          extra_flags: ${{ env.GLOBAL_EXTRA_FLAGS }}
 #          s3_upload: true
 #          s3_bucket: ${{ env.S3_BUCKET }}
-#          s3_path: ${{ env.S3_PATH }}/results
+#          s3_path: ${{ env.S3_PATH }}
 #          rclone_config: ${{ secrets.RCLONE_CONFIG }}
 #          rclone_version: ${{ env.INSTALL_RCLONE_VERSION }}
 #          workflow_artifact_upload: true
