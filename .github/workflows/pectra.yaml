@@ -83,7 +83,8 @@ jobs:
         client: [go-ethereum, besu, reth, nethermind, erigon]
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/hive
+      - uses: ./.github/actions/install-deps
+      - uses: ./
         with:
           client: ${{ matrix.client }}
           simulator: ethereum/eest/consume-engine
@@ -108,7 +109,8 @@ jobs:
         client: [go-ethereum, besu, reth, nethermind, erigon]
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/hive
+      - uses: ./.github/actions/install-deps
+      - uses: ./
         with:
           client: ${{ matrix.client }}
           simulator: ethereum/eest/consume-rlp
