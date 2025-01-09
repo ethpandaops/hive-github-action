@@ -89,7 +89,7 @@ runs:
         ref: ${{ inputs.hive_version }}
         path: ./src
 
-    - name: Build hive
+    - name: Build hive and hiveview
       working-directory: ./src
       shell: bash
       run: |
@@ -159,7 +159,7 @@ runs:
         name: ${{ env.WORKFLOW_ARTIFACT_PREFIX }}-client-config.yaml
         path: src/client-config.yaml
 
-    - name: Setup Rclone
+    - name: Setup Rclone for S3 upload
       if: ${{ inputs.s3_upload == 'true' && env.RUN_SUCCESS == 'true' }}
       uses: AnimMouse/setup-rclone@e4c62ff5f942e489edceaffb563832d970253322
       with:
@@ -170,4 +170,21 @@ runs:
       if: ${{ inputs.s3_upload == 'true' && env.RUN_SUCCESS == 'true' }}
       shell: bash
       run: |
-        rclone copy --no-traverse src/results s3:${{ inputs.s3_bucket }}/${{ inputs.s3_path }}
+        rclone copy --no-traverse src/results s3:${{ inputs.s3_bucket }}/${{ inputs.s3_path }}/results
+
+    - name: Generate hive view website assets and upload to S3
+      if: ${{ inputs.s3_upload == 'true' && env.RUN_SUCCESS == 'true' }}
+      working-directory: ./src
+      shell: bash
+      run: |
+        ./hiveview --deploy hive-www
+        rclone copy --no-traverse hive-www s3:${{ inputs.s3_bucket }}/${{ inputs.s3_path }}
+
+    - name: Update hive view index and upload to S3
+      if: ${{ inputs.s3_upload == 'true' && env.RUN_SUCCESS == 'true' }}
+      working-directory: ./src
+      shell: bash
+      run: |
+        rclone copy --progress --transfers=100 --include "*.json" s3://${{ inputs.s3_bucket }}/${{ inputs.s3_path }}/results tmp_results
+        ./hiveview --listing --logdir tmp_results > listing.jsonl
+        rclone copy listing.jsonl s3:${{ inputs.s3_bucket }}/${{ inputs.s3_path }}/
