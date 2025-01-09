@@ -213,8 +213,10 @@ runs:
       if: env.RUN_SUCCESS == 'true'
       shell: bash
       run: |
+        set -x
+        ls -lah $GITHUB_ACTION_PATH/scripts/
         for json_file in src/results/*.json; do
-          if [ -f "$json_file" ]; then
+          if [ -f "$json_file" ] && [[ "$json_file" != *"hive.json" ]]; then
             $GITHUB_ACTION_PATH/scripts/json-result-to-md-summary.sh "$json_file"
             cat "${json_file%.*}.md" >> $GITHUB_STEP_SUMMARY
           fi
