@@ -170,7 +170,7 @@ runs:
       if: ${{ inputs.s3_upload == 'true' && env.RUN_SUCCESS == 'true' }}
       shell: bash
       run: |
-        rclone copy --no-traverse src/results s3:${{ inputs.s3_bucket }}/${{ inputs.s3_path }}/results
+        rclone copy --no-traverse --exclude "hive.json" src/results s3:${{ inputs.s3_bucket }}/${{ inputs.s3_path }}/results
 
     - name: Generate hive view website assets and upload to S3
       if: ${{ inputs.s3_upload == 'true' && env.RUN_SUCCESS == 'true' }}
