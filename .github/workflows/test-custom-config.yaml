@@ -1,0 +1,25 @@
+name: Test
+on:
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./
+        with:
+          client: go-ethereum
+          simulator: ethereum/rpc-compat
+          client_config: |
+            - client: go-ethereum
+              nametag: main
+              dockerfile: git
+              build_args:
+                github: ethereum/go-ethereum
+                tag: main
