@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Check if file is provided
-if [ $# -ne 1 ]; then
-    echo "Usage: $0 <json-file>"
+if [ $# -lt 1 ] || [ $# -gt 2 ]; then
+    echo "Usage: $0 <json-file> [hiveViewURLPrefix]"
     exit 1
 fi
 
@@ -13,10 +13,15 @@ if ! command -v jq &> /dev/null; then
 fi
 
 json_file="$1"
+hive_view_prefix="${2:-}"
+hive_view_prefix="${hive_view_prefix%/}" # Remove trailing slash if present
 
 # Convert JSON to markdown using jq
 {
     echo "## Test: $(jq -r .name "$json_file")"
+    if [ -n "$hive_view_prefix" ]; then
+        echo "Detailed results: [$hive_view_prefix/suite.html?suiteid=$(basename "$json_file")]($hive_view_prefix/suite.html?suiteid=$(basename "$json_file"))"
+    fi
     echo "<details><summary>Description</summary>$(jq -r .description "$json_file")</details>"
     echo
     echo "### Client Versions"

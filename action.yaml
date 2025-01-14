@@ -51,7 +51,12 @@ inputs:
     description: 'Path prefix in S3 bucket'
     required: false
     type: string
-    default: 'hive-results'
+    default: ''
+  s3_public_url:
+    description: 'Public URL prefix for Hive View. Used to generate links to detailed results in the summary.'
+    required: false
+    type: string
+    default: ''
   rclone_config:
     description: 'Rclone config file'
     required: false
@@ -221,7 +226,7 @@ runs:
         ls -lah $GITHUB_ACTION_PATH/
         for json_file in src/results/*.json; do
           if [ -f "$json_file" ] && [[ "$json_file" != *"hive.json" ]]; then
-            $GITHUB_ACTION_PATH/scripts/json-result-to-md-summary.sh "$json_file"
+            $GITHUB_ACTION_PATH/scripts/json-result-to-md-summary.sh "$json_file" "${{ inputs.s3_public_url }}"
             cat "${json_file%.*}.md" >> $GITHUB_STEP_SUMMARY
           fi
         done
