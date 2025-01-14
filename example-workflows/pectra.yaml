@@ -2,7 +2,7 @@ name: Pectra Devnet 5
 on:
   push:
     branches:
-      - init
+      - main
 
 env:
   S3_BUCKET: hive-results
@@ -55,8 +55,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        #client: [go-ethereum, besu, reth, nethermind, erigon]
-        client: [go-ethereum, besu]
+        client: [go-ethereum, besu, reth, nethermind, erigon]
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/install-deps
@@ -74,54 +73,54 @@ jobs:
           rclone_version: ${{ env.INSTALL_RCLONE_VERSION }}
           workflow_artifact_upload: true
 
-#  eest-c-engine:
-#    runs-on: self-hosted-ghr-size-l-x64
-#    concurrency:
-#      group: >-
-#        ${{ github.head_ref }}-${{ matrix.client }}-eest-consume-engine
-#      cancel-in-progress: true
-#    strategy:
-#      fail-fast: false
-#      matrix:
-#        client: [go-ethereum, besu, reth, nethermind, erigon]
-#    steps:
-#      - uses: actions/checkout@v4
-#      - uses: ./.github/actions/install-deps
-#      - uses: ./
-#        with:
-#          client: ${{ matrix.client }}
-#          simulator: ethereum/eest/consume-engine
-#          client_config: ${{ env.CLIENT_CONFIG }}
-#          extra_flags: ${{ env.GLOBAL_EXTRA_FLAGS }}
-#          s3_upload: true
-#          s3_bucket: ${{ env.S3_BUCKET }}
-#          s3_path: ${{ env.S3_PATH }}
-#          rclone_config: ${{ secrets.RCLONE_CONFIG }}
-#          rclone_version: ${{ env.INSTALL_RCLONE_VERSION }}
-#          workflow_artifact_upload: true
-#
-#  eest-c-rlp:
-#    runs-on: self-hosted-ghr-size-l-x64
-#    concurrency:
-#      group: >-
-#        ${{ github.head_ref }}-${{ matrix.client }}-eest-consume-rlp
-#      cancel-in-progress: true
-#    strategy:
-#      fail-fast: false
-#      matrix:
-#        client: [go-ethereum, besu, reth, nethermind, erigon]
-#    steps:
-#      - uses: actions/checkout@v4
-#      - uses: ./.github/actions/install-deps
-#      - uses: ./
-#        with:
-#          client: ${{ matrix.client }}
-#          simulator: ethereum/eest/consume-rlp
-#          client_config: ${{ env.CLIENT_CONFIG }}
-#          extra_flags: ${{ env.GLOBAL_EXTRA_FLAGS }}
-#          s3_upload: true
-#          s3_bucket: ${{ env.S3_BUCKET }}
-#          s3_path: ${{ env.S3_PATH }}
-#          rclone_config: ${{ secrets.RCLONE_CONFIG }}
-#          rclone_version: ${{ env.INSTALL_RCLONE_VERSION }}
-#          workflow_artifact_upload: true
+  eest-c-engine:
+    runs-on: self-hosted-ghr-size-l-x64
+    concurrency:
+      group: >-
+        ${{ github.head_ref }}-${{ matrix.client }}-eest-consume-engine
+      cancel-in-progress: true
+    strategy:
+      fail-fast: false
+      matrix:
+        client: [go-ethereum, besu, reth, nethermind, erigon]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/install-deps
+      - uses: ./
+        with:
+          client: ${{ matrix.client }}
+          simulator: ethereum/eest/consume-engine
+          client_config: ${{ env.CLIENT_CONFIG }}
+          extra_flags: ${{ env.GLOBAL_EXTRA_FLAGS }}
+          s3_upload: true
+          s3_bucket: ${{ env.S3_BUCKET }}
+          s3_path: ${{ env.S3_PATH }}
+          rclone_config: ${{ secrets.RCLONE_CONFIG }}
+          rclone_version: ${{ env.INSTALL_RCLONE_VERSION }}
+          workflow_artifact_upload: true
+
+  eest-c-rlp:
+    runs-on: self-hosted-ghr-size-l-x64
+    concurrency:
+      group: >-
+        ${{ github.head_ref }}-${{ matrix.client }}-eest-consume-rlp
+      cancel-in-progress: true
+    strategy:
+      fail-fast: false
+      matrix:
+        client: [go-ethereum, besu, reth, nethermind, erigon]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/install-deps
+      - uses: ./
+        with:
+          client: ${{ matrix.client }}
+          simulator: ethereum/eest/consume-rlp
+          client_config: ${{ env.CLIENT_CONFIG }}
+          extra_flags: ${{ env.GLOBAL_EXTRA_FLAGS }}
+          s3_upload: true
+          s3_bucket: ${{ env.S3_BUCKET }}
+          s3_path: ${{ env.S3_PATH }}
+          rclone_config: ${{ secrets.RCLONE_CONFIG }}
+          rclone_version: ${{ env.INSTALL_RCLONE_VERSION }}
+          workflow_artifact_upload: true
