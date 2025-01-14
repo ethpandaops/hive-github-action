@@ -16,3 +16,4 @@ jobs:
         with:
           client: go-ethereum
           simulator: ethereum/sync
+          workflow_artifact_upload: true

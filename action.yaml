@@ -137,7 +137,7 @@ runs:
         fi
 
     - name: Set artifact name
-      if: ${{ inputs.workflow_artifact_upload == 'true' && env.RUN_SUCCESS == 'true' }}
+      if: ${{ inputs.workflow_artifact_upload == 'true'}}
       shell: bash
       run: |
         if [ -n "${{ inputs.workflow_artifact_prefix }}" ]; then
@@ -151,14 +151,14 @@ runs:
         fi
 
     - name: Upload test results as workflow artifact
-      if: ${{ inputs.workflow_artifact_upload == 'true' && env.RUN_SUCCESS == 'true' }}
+      if: ${{ inputs.workflow_artifact_upload == 'true'}}
       uses: actions/upload-artifact@v4
       with:
         name: ${{ env.WORKFLOW_ARTIFACT_PREFIX }}-results.zip
         path: src/results
 
     - name: Upload client config as workflow artifact
-      if: ${{ inputs.workflow_artifact_upload == 'true' && env.RUN_SUCCESS == 'true' && inputs.client_config != '' }}
+      if: ${{ inputs.workflow_artifact_upload == 'true' && inputs.client_config != '' }}
       uses: actions/upload-artifact@v4
       with:
         name: ${{ env.WORKFLOW_ARTIFACT_PREFIX }}-client-config.yaml

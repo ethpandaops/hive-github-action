@@ -16,9 +16,10 @@ jobs:
         with:
           client: go-ethereum
           simulator: ethereum/rpc-compat
+          workflow_artifact_upload: true
           client_config: |
             - client: go-ethereum
-              nametag: main
+              nametag: go-ethereum-main
               dockerfile: git
               build_args:
                 github: ethereum/go-ethereum
