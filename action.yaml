@@ -1,0 +1,232 @@
+name: Ethereum Hive
+
+description: Run Ethereum Hive tests with a given client and simulator
+
+inputs:
+  # Test configuration
+  simulator:
+    description: 'Simulator to run (e.g. ethereum/sync)'
+    required: true
+    type: string
+    default: 'ethereum/sync'
+  client:
+    description: 'Client to test'
+    required: true
+    type: string
+    default: 'go-ethereum'
+  client_config:
+    description: 'Client configuration in YAML format'
+    required: false
+    type: string
+  extra_flags:
+    description: 'Additional flags for hive'
+    required: false
+    type: string
+  # Hive configuration
+  hive_repository:
+    description: 'Hive repository to use'
+    required: false
+    type: string
+    default: 'ethereum/hive'
+  hive_version:
+    description: 'Hive version/branch to use'
+    required: false
+    type: string
+    default: 'master'
+  go_version:
+    description: 'Go version used to build hive'
+    required: false
+    type: string
+    default: '1.21'
+  ## S3 upload using rclone
+  s3_upload:
+    description: 'Upload test results to S3'
+    required: false
+    default: 'false'
+  s3_bucket:
+    description: 'S3 bucket name'
+    required: false
+    type: string
+  s3_path:
+    description: 'Path prefix in S3 bucket'
+    required: false
+    type: string
+    default: ''
+  s3_public_url:
+    description: 'Public URL prefix for Hive View. Used to generate links to detailed results in the summary.'
+    required: false
+    type: string
+    default: ''
+  rclone_config:
+    description: 'Rclone config file'
+    required: false
+    type: string
+    default: '' # Should be base64 encoded. Example: base64 -w 0 rclone.conf
+  rclone_version:
+    description: 'Rclone version to use'
+    required: false
+    type: string
+    default: 'latest'
+  # Workflow artifact upload
+  workflow_artifact_upload:
+    description: 'Upload test results as an workflow artifact'
+    required: false
+    default: 'false'
+  workflow_artifact_prefix:
+    description: 'Prefix for the workflow artifacts. If not provided, the prefix will be the simulator and client name.'
+    required: false
+    type: string
+    default: ''
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Install go
+      uses: actions/setup-go@v4
+      with:
+        go-version: ${{ inputs.go_version }}
+        cache: false
+
+    - name: Checkout hive
+      uses: actions/checkout@v4
+      with:
+        repository: ethereum/hive
+        ref: ${{ inputs.hive_version }}
+        path: ./src
+
+    - name: Build hive and hiveview
+      working-directory: ./src
+      shell: bash
+      run: |
+        go build -o hive .
+        go build -o hiveview ./cmd/hiveview
+
+    - name: Create results directory
+      working-directory: ./src
+      shell: bash
+      run: mkdir -p results
+
+    - name: Setup client config
+      if: inputs.client_config != ''
+      working-directory: ./src
+      shell: bash
+      run: |
+        echo "${{ inputs.client_config }}" > client-config.yaml
+        echo "CLIENT_CONFIG_FLAG=--client-file=client-config.yaml" >> $GITHUB_ENV
+
+    - name: Run hive tests
+      working-directory: ./src
+      shell: bash
+      run: |
+        set -x
+        (./hive \
+          --sim "${{ inputs.simulator }}" \
+          --client "${{ inputs.client }}" \
+          --results-root results \
+          ${CLIENT_CONFIG_FLAG:-} \
+          ${{ inputs.extra_flags }} \
+           2>&1 || true ) | tee hive.log
+
+        # Check the last 10 lines of the log for the success message
+        if tail -n 10 hive.log | grep -q "simulation .* finished"; then
+          echo "RUN_SUCCESS=true" >> $GITHUB_ENV
+          exit 0
+        else
+          echo "RUN_SUCCESS=false" >> $GITHUB_ENV
+          exit 1
+        fi
+
+    - name: Set artifact name
+      if: ${{ inputs.workflow_artifact_upload == 'true'}}
+      shell: bash
+      run: |
+        if [ -n "${{ inputs.workflow_artifact_prefix }}" ]; then
+          echo "WORKFLOW_ARTIFACT_PREFIX=${{ inputs.workflow_artifact_prefix }}" >> $GITHUB_ENV
+        else
+          SIMULATOR_NAME=${{ inputs.simulator }}
+          # replace / in simulator name with - because artifact names cannot contain /
+          SIMULATOR_NAME="${SIMULATOR_NAME//\//-}"
+          CLIENT_NAME=${{ inputs.client }}
+          echo "WORKFLOW_ARTIFACT_PREFIX=$SIMULATOR_NAME-$CLIENT_NAME" >> $GITHUB_ENV
+        fi
+
+    - name: Upload test results as workflow artifact
+      if: ${{ inputs.workflow_artifact_upload == 'true'}}
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ env.WORKFLOW_ARTIFACT_PREFIX }}-results.zip
+        path: src/results
+
+    - name: Upload client config as workflow artifact
+      if: ${{ inputs.workflow_artifact_upload == 'true' && inputs.client_config != '' }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ env.WORKFLOW_ARTIFACT_PREFIX }}-client-config.yaml
+        path: src/client-config.yaml
+
+    - name: Setup Rclone for S3 upload
+      if: ${{ inputs.s3_upload == 'true' && env.RUN_SUCCESS == 'true' }}
+      uses: AnimMouse/setup-rclone@e4c62ff5f942e489edceaffb563832d970253322
+      with:
+        rclone_config: ${{ inputs.rclone_config }}
+        version: ${{ inputs.rclone_version }}
+
+    - name: Upload results to S3
+      if: ${{ inputs.s3_upload == 'true' && env.RUN_SUCCESS == 'true' }}
+      shell: bash
+      run: |
+        rclone copy --no-traverse --exclude "hive.json" src/results s3:${{ inputs.s3_bucket }}/${{ inputs.s3_path }}/results
+
+    - name: Generate hive view website assets and upload to S3
+      if: ${{ inputs.s3_upload == 'true' && env.RUN_SUCCESS == 'true' }}
+      working-directory: ./src
+      shell: bash
+      run: |
+        ./hiveview --deploy hive-www
+        rclone copy --no-traverse hive-www s3:${{ inputs.s3_bucket }}/${{ inputs.s3_path }}
+
+    - name: Update hive view index and upload to S3
+      if: ${{ inputs.s3_upload == 'true' && env.RUN_SUCCESS == 'true' }}
+      working-directory: ./src
+      shell: bash
+      run: |
+        rclone copy --progress --transfers=100 --include "*.json" s3://${{ inputs.s3_bucket }}/${{ inputs.s3_path }}/results tmp_results
+        ./hiveview --listing --logdir tmp_results > listing.jsonl
+        rclone copy listing.jsonl s3:${{ inputs.s3_bucket }}/${{ inputs.s3_path }}/
+
+    - name: Generate summary
+      shell: bash
+      run: |
+        # Add the command executed
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "## Command" >> $GITHUB_STEP_SUMMARY
+        echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
+        echo "hive --sim \"${{ inputs.simulator }}\" --client \"${{ inputs.client }}\" --results-root results ${CLIENT_CONFIG_FLAG:-} ${{ inputs.extra_flags }}" >> $GITHUB_STEP_SUMMARY
+        echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+
+    - name: Generate summary for client config
+      if: ${{ inputs.client_config != '' }}
+      shell: bash
+      run: |
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "<details>" >> $GITHUB_STEP_SUMMARY
+        echo "<summary>client-config.yaml</summary>" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "\`\`\`yaml" >> $GITHUB_STEP_SUMMARY
+        echo "${{ inputs.client_config }}" >> $GITHUB_STEP_SUMMARY
+        echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "</details>" >> $GITHUB_STEP_SUMMARY
+
+    - name: Convert JSON results to markdown summaries
+      if: env.RUN_SUCCESS == 'true'
+      shell: bash
+      run: |
+        set -x
+        ls -lah $GITHUB_ACTION_PATH/
+        for json_file in src/results/*.json; do
+          if [ -f "$json_file" ] && [[ "$json_file" != *"hive.json" ]]; then
+            $GITHUB_ACTION_PATH/scripts/json-result-to-md-summary.sh "$json_file" "${{ inputs.s3_public_url }}"
+            cat "${json_file%.*}.md" >> $GITHUB_STEP_SUMMARY
+          fi
+        done

@@ -1,0 +1,126 @@
+name: Pectra Devnet 5
+on:
+  push:
+    branches:
+      - main
+
+env:
+  S3_BUCKET: hive-results
+  S3_PATH: pectra-devnet-5
+  S3_PUBLIC_URL: https://hive.ethpandaops.io/pectra-devnet-5
+  INSTALL_RCLONE_VERSION: v1.68.2
+  GLOBAL_EXTRA_FLAGS: >-
+    --sim.buildarg fixtures=https://github.com/ethereum/execution-spec-tests/releases/download/pectra-devnet-5%40v1.1.0/fixtures_pectra-devnet-5.tar.gz
+    --sim.buildarg branch=pectra-devnet-5
+    --client.checktimelimit=60s
+    --sim.parallelism=4
+  CLIENT_CONFIG: |
+    - client: go-ethereum
+      nametag: prague-devnet-5
+      dockerfile: git
+      build_args:
+        github: s1na/go-ethereum
+        tag: prague-devnet-5
+    - client: besu
+      nametag: prague-devnet-5
+      dockerfile: git
+      build_args:
+        github: siladu/besu
+        tag: pectra-devnet-5-interop
+    - client: reth
+      nametag: main
+      dockerfile: git
+      build_args:
+        github: paradigmxyz/reth
+        tag: main
+    - client: nethermind
+      nametag: main
+      dockerfile: git
+      build_args:
+        github: NethermindEth/nethermind
+        tag: pectra-devnet-5
+    - client: erigon
+      nametag: pectra5
+      build_args:
+        baseimage: erigontech/erigon
+        tag: pectra5
+
+jobs:
+  rpc-compat:
+    runs-on: self-hosted-ghr-size-m-x64
+    concurrency:
+      group: >-
+        ${{ github.head_ref }}-${{ matrix.client }}-rpc-compat
+      cancel-in-progress: true
+    strategy:
+      fail-fast: false
+      matrix:
+        client: [go-ethereum, besu, reth, nethermind, erigon]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/install-deps
+      - uses: ./
+        with:
+          client: ${{ matrix.client }}
+          simulator: ethereum/rpc-compat
+          client_config: ${{ env.CLIENT_CONFIG }}
+          extra_flags: ${{ env.GLOBAL_EXTRA_FLAGS }}
+          s3_upload: true
+          s3_bucket: ${{ env.S3_BUCKET }}
+          s3_path: ${{ env.S3_PATH }}
+          s3_public_url: ${{ env.S3_PUBLIC_URL }}
+          rclone_config: ${{ secrets.RCLONE_CONFIG }}
+          rclone_version: ${{ env.INSTALL_RCLONE_VERSION }}
+          workflow_artifact_upload: true
+
+  eest-c-engine:
+    runs-on: self-hosted-ghr-size-l-x64
+    concurrency:
+      group: >-
+        ${{ github.head_ref }}-${{ matrix.client }}-eest-consume-engine
+      cancel-in-progress: true
+    strategy:
+      fail-fast: false
+      matrix:
+        client: [go-ethereum, besu, reth, nethermind, erigon]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/install-deps
+      - uses: ./
+        with:
+          client: ${{ matrix.client }}
+          simulator: ethereum/eest/consume-engine
+          client_config: ${{ env.CLIENT_CONFIG }}
+          extra_flags: ${{ env.GLOBAL_EXTRA_FLAGS }}
+          s3_upload: true
+          s3_bucket: ${{ env.S3_BUCKET }}
+          s3_path: ${{ env.S3_PATH }}
+          rclone_config: ${{ secrets.RCLONE_CONFIG }}
+          rclone_version: ${{ env.INSTALL_RCLONE_VERSION }}
+          workflow_artifact_upload: true
+
+  eest-c-rlp:
+    runs-on: self-hosted-ghr-size-l-x64
+    concurrency:
+      group: >-
+        ${{ github.head_ref }}-${{ matrix.client }}-eest-consume-rlp
+      cancel-in-progress: true
+    strategy:
+      fail-fast: false
+      matrix:
+        client: [go-ethereum, besu, reth, nethermind, erigon]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/install-deps
+      - uses: ./
+        with:
+          client: ${{ matrix.client }}
+          simulator: ethereum/eest/consume-rlp
+          client_config: ${{ env.CLIENT_CONFIG }}
+          extra_flags: ${{ env.GLOBAL_EXTRA_FLAGS }}
+          s3_upload: true
+          s3_bucket: ${{ env.S3_BUCKET }}
+          s3_path: ${{ env.S3_PATH }}
+          rclone_config: ${{ secrets.RCLONE_CONFIG }}
+          rclone_version: ${{ env.INSTALL_RCLONE_VERSION }}
+          workflow_artifact_upload: true

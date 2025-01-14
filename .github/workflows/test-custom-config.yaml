@@ -1,0 +1,26 @@
+name: Test - Custom Config
+on:
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./
+        with:
+          client: go-ethereum
+          simulator: ethereum/rpc-compat
+          workflow_artifact_upload: true
+          client_config: |
+            - client: go-ethereum
+              nametag: go-ethereum-main
+              dockerfile: git
+              build_args:
+                github: ethereum/go-ethereum
+                tag: master
