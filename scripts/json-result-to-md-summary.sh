@@ -19,9 +19,6 @@ hive_view_prefix="${hive_view_prefix%/}" # Remove trailing slash if present
 # Convert JSON to markdown using jq
 {
     echo "## Test: $(jq -r .name "$json_file")"
-    if [ -n "$hive_view_prefix" ]; then
-        echo "Detailed results: [$hive_view_prefix/suite.html?suiteid=$(basename "$json_file")]($hive_view_prefix/suite.html?suiteid=$(basename "$json_file"))"
-    fi
     echo "<details><summary>Description</summary>$(jq -r .description "$json_file")</details>"
     echo
     echo "### Client Versions"
@@ -32,6 +29,10 @@ hive_view_prefix="${hive_view_prefix%/}" # Remove trailing slash if present
     echo "| Total | ✅ | ❌ |"
     echo "|-------------|-----------|-----------|"
     echo "| $(jq -r '.testCases | length' "$json_file") | $(jq -r '[.testCases[].summaryResult.pass] | map(select(. == true)) | length' "$json_file") | $(jq -r '[.testCases[].summaryResult.pass] | map(select(. == false)) | length' "$json_file") |"
+    echo
+    if [ -n "$hive_view_prefix" ]; then
+        echo "Detailed results: [$hive_view_prefix/suite.html?suiteid=$(basename "$json_file")]($hive_view_prefix/suite.html?suiteid=$(basename "$json_file"))"
+    fi
     echo
 } > "${json_file%.*}.md"
 
