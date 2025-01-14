@@ -1,4 +1,4 @@
-name: PR Title Checker
+name: Check - PR Title
 
 on:
   pull_request_target:
