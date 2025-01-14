@@ -115,7 +115,6 @@ runs:
         echo "CLIENT_CONFIG_FLAG=--client-file=client-config.yaml" >> $GITHUB_ENV
 
     - name: Run hive tests
-      continue-on-error: true
       working-directory: ./src
       shell: bash
       run: |
