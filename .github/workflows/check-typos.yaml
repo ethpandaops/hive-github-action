@@ -10,7 +10,7 @@ env:
 
 jobs:
   spelling:
-    name: Spell Check with Typos
+    name: validate
     runs-on: ubuntu-latest
     steps:
     - name: Checkout Actions Repository
