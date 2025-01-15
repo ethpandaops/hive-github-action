@@ -2,7 +2,15 @@
 
 This action is a wrapper around [Ethereum Hive](https://github.com/ethereum/hive). It allows you to run tests with different clients and simulators. It also supports uploading test results to S3 and/or as a workflow artifact.
 
-> ⚠️ **Note:** This action is still under development and may introduce breaking changes. If you want to use it in your workflows, make sure to reference to a specific commit hash.
+> ⚠️ **Note:** This action is still under development and may introduce breaking changes. If you want to use it in your workflows, make sure to reference to a specific commit hash or tag/release.
+
+## Used in
+
+Here are some examples of how this action is used in other repositories:
+
+- [`ethpandaops/pectra-devnets`](https://github.com/ethpandaops/pectra-devnets/tree/master/.github/workflows) - Runs tests for the [Pectra](https://eips.ethereum.org/EIPS/eip-7600) hardfork.
+
+
 ## Inputs
 
 ### Test Configuration
@@ -46,7 +54,7 @@ This action is a wrapper around [Ethereum Hive](https://github.com/ethereum/hive
 ### Simple example doing sync tests with the latest go-ethereum
 
 ```yaml
-- uses: ./.github/actions/hive
+- uses: ethpandaops/hive-github-action@v0.1.0
   with:
     client: go-ethereum
     simulator: ethereum/sync
@@ -70,7 +78,7 @@ env:
 Then you can use the `CLIENT_CONFIG` environment variable in your workflow.
 
 ```yaml
-- uses: ./.github/actions/hive
+- uses: ethpandaops/hive-github-action@v0.1.0
   with:
     client: go-ethereum
     simulator: ethereum/sync
@@ -100,7 +108,7 @@ Then you can run `base64 -w 0 rclone.conf` and store the output as a github acti
 Afterwards you just need to reference the secret for the `rclone_config` input.
 
 ```yaml
-- uses: ./.github/actions/hive
+- uses: ethpandaops/hive-github-action@v0.1.0
   with:
     client: go-ethereum
     simulator: ethereum/sync
@@ -115,7 +123,7 @@ Afterwards you just need to reference the secret for the `rclone_config` input.
 
 This will upload the test results as a workflow artifact. By default the artifact prefix will be the simulator and client name. You can override this by providing a `workflow_artifact_prefix` input.
 ```yaml
-- uses: ./.github/actions/hive
+- uses: ethpandaops/hive-github-action@v0.1.0
   with:
     client: go-ethereum
     simulator: ethereum/sync
