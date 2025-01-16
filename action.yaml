@@ -1,6 +1,8 @@
 name: Ethereum Hive
-
 description: Run Ethereum Hive tests with a given client and simulator
+branding:
+  icon: 'align-justify'
+  color: 'orange'
 
 inputs:
   # Test configuration
