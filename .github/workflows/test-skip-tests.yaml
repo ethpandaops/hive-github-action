@@ -1,0 +1,23 @@
+name: Test - Skip tests
+on:
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: "test-skip-tests-${{ github.head_ref || github.ref }}"
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./
+        with:
+          client: go-ethereum
+          simulator: ethereum/sync
+          workflow_artifact_upload: true
+          skip_tests: true
