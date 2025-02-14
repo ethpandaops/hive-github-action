@@ -101,7 +101,7 @@ runs:
     - name: Checkout hive
       uses: actions/checkout@v4
       with:
-        repository: ethereum/hive
+        repository: ${{ inputs.hive_repository }}
         ref: ${{ inputs.hive_version }}
         path: ./src
 
