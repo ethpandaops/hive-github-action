@@ -11,7 +11,7 @@ jobs:
   run:
     runs-on: ubuntu-latest
     concurrency:
-      group: "test-simple-${{ github.head_ref || github.ref }}"
+      group: "test-skip-tests-${{ github.head_ref || github.ref }}"
       cancel-in-progress: true
     steps:
       - uses: actions/checkout@v4
