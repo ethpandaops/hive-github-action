@@ -21,6 +21,7 @@ Here are some examples of how this action is used in other repositories:
 | `client` | Client to test | Yes | `go-ethereum` |
 | `client_config` | Client configuration in YAML format | No | - |
 | `extra_flags` | Additional flags to pass to hive | No | - |
+| `skip_tests` | Skip tests. Useful when used together with input.website_upload = "true" to upload the website without running tests. | No | `false` |
 
 ### Hive Configuration
 
@@ -120,6 +121,19 @@ Afterwards you just need to reference the secret for the `rclone_config` input.
     rclone_config: ${{ secrets.RCLONE_CONFIG }}
 ```
 
+### Just upload the website using hiveview without running tests
+
+```yaml
+- uses: ethpandaops/hive-github-action@v0.1.0
+  with:
+    website_upload: true # This is required to upload the website
+    skip_tests: true # This is required to skip the tests
+    s3_upload: true
+    s3_bucket: my-bucket
+    s3_path: my-path
+    rclone_config: ${{ secrets.RCLONE_CONFIG }}
+```
+
 ### Uploading the results directory as an GitHub workflow artifact
 
 This will upload the test results as a workflow artifact. By default the artifact prefix will be the simulator and client name. You can override this by providing a `workflow_artifact_prefix` input.
@@ -131,6 +145,7 @@ This will upload the test results as a workflow artifact. By default the artifac
     workflow_artifact_upload: true
     # workflow_artifact_prefix: my-custom-prefix
 ```
+
 ## Local testing and development
 
 To test the action locally, you can run [act](https://github.com/nektos/act) with the following command:
