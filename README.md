@@ -39,6 +39,7 @@ Here are some examples of how this action is used in other repositories:
 | `s3_path` | Path prefix in S3 bucket | No | `hive-results` |
 | `rclone_version` | Rclone version to use | No | `latest` |
 | `rclone_config` | Base64 encoded rclone config file | No | - |
+| `website_upload` | Upload Hive View website | No | `true` |
 
 *Required if `s3_upload` is `true`
 
