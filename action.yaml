@@ -69,6 +69,10 @@ inputs:
     required: false
     type: string
     default: 'latest'
+  website_upload:
+    description: 'Upload Hive View website to S3'
+    required: false
+    default: 'true'
   # Workflow artifact upload
   workflow_artifact_upload:
     description: 'Upload test results as an workflow artifact'
@@ -180,7 +184,12 @@ runs:
         rclone copy --no-traverse --exclude "hive.json" src/results s3:${{ inputs.s3_bucket }}/${{ inputs.s3_path }}/results
 
     - name: Generate hive view website assets and upload to S3
-      if: ${{ inputs.s3_upload == 'true' && env.RUN_SUCCESS == 'true' }}
+      if: >-
+        ${{
+          inputs.s3_upload == 'true' &&
+          inputs.website_upload == 'true' &&
+          env.RUN_SUCCESS == 'true'
+        }}
       working-directory: ./src
       shell: bash
       run: |
