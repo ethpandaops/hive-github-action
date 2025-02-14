@@ -24,6 +24,11 @@ inputs:
     description: 'Additional flags for hive'
     required: false
     type: string
+  skip_tests:
+    description: 'Skip tests. Useful when used together with input.website_upload = "true" to upload the website without running tests.'
+    required: false
+    type: string
+    default: 'false'
   # Hive configuration
   hive_repository:
     description: 'Hive repository to use'
@@ -121,6 +126,7 @@ runs:
         echo "CLIENT_CONFIG_FLAG=--client-file=client-config.yaml" >> $GITHUB_ENV
 
     - name: Run hive tests
+      if: inputs.skip_tests != 'true'
       working-directory: ./src
       shell: bash
       run: |
@@ -142,8 +148,15 @@ runs:
           exit 1
         fi
 
+    - name: Inform of skipped tests
+      if: inputs.skip_tests == 'true'
+      shell: bash
+      run: |
+        echo "RUN_SUCCESS=true" >> $GITHUB_ENV
+        echo "Tests were skipped"
+
     - name: Set artifact name
-      if: ${{ inputs.workflow_artifact_upload == 'true'}}
+      if: ${{ inputs.workflow_artifact_upload == 'true' && inputs.skip_tests != 'true' }}
       shell: bash
       run: |
         if [ -n "${{ inputs.workflow_artifact_prefix }}" ]; then
@@ -157,14 +170,14 @@ runs:
         fi
 
     - name: Upload test results as workflow artifact
-      if: ${{ inputs.workflow_artifact_upload == 'true'}}
+      if: ${{ inputs.workflow_artifact_upload == 'true' && inputs.skip_tests != 'true' }}
       uses: actions/upload-artifact@v4
       with:
         name: ${{ env.WORKFLOW_ARTIFACT_PREFIX }}-results.zip
         path: src/results
 
     - name: Upload client config as workflow artifact
-      if: ${{ inputs.workflow_artifact_upload == 'true' && inputs.client_config != '' }}
+      if: ${{ inputs.workflow_artifact_upload == 'true' && inputs.client_config != '' && inputs.skip_tests != 'true' }}
       uses: actions/upload-artifact@v4
       with:
         name: ${{ env.WORKFLOW_ARTIFACT_PREFIX }}-client-config.yaml
@@ -178,7 +191,7 @@ runs:
         version: ${{ inputs.rclone_version }}
 
     - name: Upload results to S3
-      if: ${{ inputs.s3_upload == 'true' && env.RUN_SUCCESS == 'true' }}
+      if: ${{ inputs.s3_upload == 'true' && env.RUN_SUCCESS == 'true' && inputs.skip_tests != 'true' }}
       shell: bash
       run: |
         rclone copy --no-traverse --exclude "hive.json" src/results s3:${{ inputs.s3_bucket }}/${{ inputs.s3_path }}/results
@@ -205,7 +218,15 @@ runs:
         ./hiveview --listing --logdir tmp_results > listing.jsonl
         rclone copy listing.jsonl s3:${{ inputs.s3_bucket }}/${{ inputs.s3_path }}/
 
+    - name: Inform that only the website was uploaded
+      if: inputs.skip_tests == 'true' && inputs.website_upload == 'true'
+      shell: bash
+      run: |
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "No tests were run. Just the website was uploaded and the index was updated." >> $GITHUB_STEP_SUMMARY
+
     - name: Generate summary
+      if: inputs.skip_tests != 'true'
       shell: bash
       run: |
         # Add the command executed
@@ -216,7 +237,7 @@ runs:
         echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
 
     - name: Generate summary for client config
-      if: ${{ inputs.client_config != '' }}
+      if: ${{ inputs.client_config != '' && inputs.skip_tests != 'true' }}
       shell: bash
       run: |
         echo "" >> $GITHUB_STEP_SUMMARY
@@ -230,7 +251,7 @@ runs:
         echo "</details>" >> $GITHUB_STEP_SUMMARY
 
     - name: Convert JSON results to markdown summaries
-      if: env.RUN_SUCCESS == 'true'
+      if: env.RUN_SUCCESS == 'true' && inputs.skip_tests != 'true'
       shell: bash
       run: |
         set -x
