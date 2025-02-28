@@ -206,7 +206,9 @@ runs:
       working-directory: ./src
       shell: bash
       run: |
+        echo "Deploying hive view"
         ./hiveview --deploy hive-www
+        echo "Uploading hive view to S3"
         rclone copy --no-traverse hive-www s3:${{ inputs.s3_bucket }}/${{ inputs.s3_path }}
 
     - name: Update hive view index and upload to S3
@@ -214,8 +216,12 @@ runs:
       working-directory: ./src
       shell: bash
       run: |
+        echo "Fetching results from S3"
         rclone copy --progress --transfers=100 --include "*.json" s3://${{ inputs.s3_bucket }}/${{ inputs.s3_path }}/results tmp_results
+        echo "Generate listings file:"
         ./hiveview --listing --logdir tmp_results > listing.jsonl
+        cat listing.jsonl
+        echo "Upload listings file to S3"
         rclone copy listing.jsonl s3:${{ inputs.s3_bucket }}/${{ inputs.s3_path }}/
 
     - name: Inform that only the website was uploaded
