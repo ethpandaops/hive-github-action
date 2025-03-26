@@ -56,7 +56,7 @@ Here are some examples of how this action is used in other repositories:
 ### Simple example doing sync tests with the latest go-ethereum
 
 ```yaml
-- uses: ethpandaops/hive-github-action@v0.1.0
+- uses: ethpandaops/hive-github-action@v0.2.0
   with:
     client: go-ethereum
     simulator: ethereum/sync
@@ -80,7 +80,7 @@ env:
 Then you can use the `CLIENT_CONFIG` environment variable in your workflow.
 
 ```yaml
-- uses: ethpandaops/hive-github-action@v0.1.0
+- uses: ethpandaops/hive-github-action@v0.2.0
   with:
     client: go-ethereum
     simulator: ethereum/sync
@@ -110,7 +110,7 @@ Then you can run `base64 -w 0 rclone.conf` and store the output as a github acti
 Afterwards you just need to reference the secret for the `rclone_config` input.
 
 ```yaml
-- uses: ethpandaops/hive-github-action@v0.1.0
+- uses: ethpandaops/hive-github-action@v0.2.0
   with:
     client: go-ethereum
     simulator: ethereum/sync
@@ -124,7 +124,7 @@ Afterwards you just need to reference the secret for the `rclone_config` input.
 ### Just upload the website using hiveview without running tests
 
 ```yaml
-- uses: ethpandaops/hive-github-action@v0.1.0
+- uses: ethpandaops/hive-github-action@v0.2.0
   with:
     website_upload: true # This is required to upload the website
     skip_tests: true # This is required to skip the tests
@@ -138,7 +138,7 @@ Afterwards you just need to reference the secret for the `rclone_config` input.
 
 This will upload the test results as a workflow artifact. By default the artifact prefix will be the simulator and client name. You can override this by providing a `workflow_artifact_prefix` input.
 ```yaml
-- uses: ethpandaops/hive-github-action@v0.1.0
+- uses: ethpandaops/hive-github-action@v0.2.0
   with:
     client: go-ethereum
     simulator: ethereum/sync
