@@ -8,9 +8,11 @@ This action is a wrapper around [Ethereum Hive](https://github.com/ethereum/hive
 
 Here are some examples of how this action is used in other repositories:
 
+- [`ethpandaops/hive-testnets`](https://github.com/ethpandaops/hive-tests/tree/master/.github/workflows) - Runs some generic hive tests targeting the latest client releases and hive simulators.
+- [`ethpandaops/fusaka-devnets`](https://github.com/ethpandaops/fusaka-devnets/tree/master/.github/workflows) - Runs tests for the [Fusaka](https://eips.ethereum.org/EIPS/eip-7607) hardfork.
 - [`ethpandaops/pectra-devnets`](https://github.com/ethpandaops/pectra-devnets/tree/master/.github/workflows) - Runs tests for the [Pectra](https://eips.ethereum.org/EIPS/eip-7600) hardfork.
 
-
+## Input
 ## Inputs
 
 ### Test Configuration
