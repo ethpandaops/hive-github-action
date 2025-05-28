@@ -41,6 +41,7 @@ Here are some examples of how this action is used in other repositories:
 | `rclone_version` | Rclone version to use | No | `latest` |
 | `rclone_config` | Base64 encoded rclone config file | No | - |
 | `website_upload` | Upload Hive View website | No | `true` |
+| `website_listing_limit` | The amount of listings to generate for the website index | No | `2000` |
 
 *Required if `s3_upload` is `true`
 
