@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.3.0](https://github.com/ethpandaops/hive-github-action/compare/v0.2.0...v0.3.0) (2025-05-28)
+
+
+### Features
+
+* allow setting amount of listed jobs for index ([#19](https://github.com/ethpandaops/hive-github-action/issues/19)) ([bbc37d7](https://github.com/ethpandaops/hive-github-action/commit/bbc37d7fc9a0df43b8633cf07cff4fe07433fba2))
+
+
+### Bug Fixes
+
+* update readme with missing website_listing_limit input param ([#21](https://github.com/ethpandaops/hive-github-action/issues/21)) ([43cfbd5](https://github.com/ethpandaops/hive-github-action/commit/43cfbd5ede2ee100bce7208b06847af869106e69))
+
 ## [0.2.0](https://github.com/ethpandaops/hive-github-action/compare/v0.1.0...v0.2.0) (2025-03-26)
 
 
