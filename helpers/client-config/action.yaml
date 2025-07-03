@@ -1,0 +1,334 @@
+name: 'Generate Client Configuration'
+description: 'Generates Hive client configuration based on input parameters'
+
+inputs:
+  client_repos:
+    description: 'JSON object containing client versions in format {"client": "repo@tag", ...}'
+    required: false
+    default: |
+      {
+        "geth": "ethereum/go-ethereum@master",
+        "besu": "hyperledger/besu@main",
+        "reth": "paradigmxyz/reth@main",
+        "nethermind": "NethermindEth/nethermind@master",
+        "erigon": "erigontech/erigon@main",
+        "nimbusel": "status-im/nimbus-eth1@master"
+      }
+  client_images:
+    description: 'JSON object containing client docker images in format {"client": "registry:tag", ...}'
+    required: false
+    default: |
+      {
+        "geth": "docker.ethquokkaops.io/dh/ethpandaops/geth:master",
+        "besu": "docker.ethquokkaops.io/dh/ethpandaops/besu:main",
+        "reth": "docker.ethquokkaops.io/dh/ethpandaops/reth:main",
+        "nethermind": "docker.ethquokkaops.io/dh/ethpandaops/nethermind:master",
+        "erigon": "docker.ethquokkaops.io/dh/ethpandaops/erigon:main",
+        "nimbusel": "docker.ethquokkaops.io/dh/ethpandaops/nimbus-eth1:master"
+      }
+  common_client_tag:
+    description: 'If provided, this tag will be used for all clients, overriding individual tags/branches'
+    required: false
+    default: ''
+  client_source:
+    description: 'How client images should be sourced (git or docker)'
+    required: true
+    default: 'git'
+  hive_version:
+    description: 'GitHub repository and tag for hive (repo@tag)'
+    required: false
+    default: 'ethereum/hive@master'
+
+  goproxy:
+    description: 'Go proxy URL for Go-based clients'
+    required: false
+    default: ''
+
+outputs:
+  # Hive version
+  hive_repo:
+    description: 'Hive repository'
+    value: ${{ steps.parse_common.outputs.hive_repo }}
+  hive_tag:
+    description: 'Hive tag'
+    value: ${{ steps.parse_common.outputs.hive_tag }}
+  # Git versions of the clients
+  geth_repo:
+    description: 'Go-Ethereum repository'
+    value: ${{ steps.parse_git.outputs.geth_repo }}
+  geth_tag:
+    description: 'Go-Ethereum tag'
+    value: ${{ steps.parse_git.outputs.geth_tag }}
+  besu_repo:
+    description: 'Besu repository'
+    value: ${{ steps.parse_git.outputs.besu_repo }}
+  besu_tag:
+    description: 'Besu tag'
+    value: ${{ steps.parse_git.outputs.besu_tag }}
+  reth_repo:
+    description: 'Reth repository'
+    value: ${{ steps.parse_git.outputs.reth_repo }}
+  reth_tag:
+    description: 'Reth tag'
+    value: ${{ steps.parse_git.outputs.reth_tag }}
+  nethermind_repo:
+    description: 'Nethermind repository'
+    value: ${{ steps.parse_git.outputs.nethermind_repo }}
+  nethermind_tag:
+    description: 'Nethermind tag'
+    value: ${{ steps.parse_git.outputs.nethermind_tag }}
+  erigon_repo:
+    description: 'Erigon repository'
+    value: ${{ steps.parse_git.outputs.erigon_repo }}
+  erigon_tag:
+    description: 'Erigon tag'
+    value: ${{ steps.parse_git.outputs.erigon_tag }}
+  nimbusel_repo:
+    description: 'Nimbus EL repository'
+    value: ${{ steps.parse_git.outputs.nimbusel_repo }}
+  nimbusel_tag:
+    description: 'Nimbus EL tag'
+    value: ${{ steps.parse_git.outputs.nimbusel_tag }}
+  # Docker images for clients - registry and tag separated
+  geth_docker_registry:
+    description: 'Go-Ethereum docker registry'
+    value: ${{ steps.parse_docker.outputs.geth_docker_registry }}
+  geth_docker_tag:
+    description: 'Go-Ethereum docker tag'
+    value: ${{ steps.parse_docker.outputs.geth_docker_tag }}
+  besu_docker_registry:
+    description: 'Besu docker registry'
+    value: ${{ steps.parse_docker.outputs.besu_docker_registry }}
+  besu_docker_tag:
+    description: 'Besu docker tag'
+    value: ${{ steps.parse_docker.outputs.besu_docker_tag }}
+  reth_docker_registry:
+    description: 'Reth docker registry'
+    value: ${{ steps.parse_docker.outputs.reth_docker_registry }}
+  reth_docker_tag:
+    description: 'Reth docker tag'
+    value: ${{ steps.parse_docker.outputs.reth_docker_tag }}
+  nethermind_docker_registry:
+    description: 'Nethermind docker registry'
+    value: ${{ steps.parse_docker.outputs.nethermind_docker_registry }}
+  nethermind_docker_tag:
+    description: 'Nethermind docker tag'
+    value: ${{ steps.parse_docker.outputs.nethermind_docker_tag }}
+  erigon_docker_registry:
+    description: 'Erigon docker registry'
+    value: ${{ steps.parse_docker.outputs.erigon_docker_registry }}
+  erigon_docker_tag:
+    description: 'Erigon docker tag'
+    value: ${{ steps.parse_docker.outputs.erigon_docker_tag }}
+  nimbusel_docker_registry:
+    description: 'Nimbus EL docker registry'
+    value: ${{ steps.parse_docker.outputs.nimbusel_docker_registry }}
+  nimbusel_docker_tag:
+    description: 'Nimbus EL docker tag'
+    value: ${{ steps.parse_docker.outputs.nimbusel_docker_tag }}
+  # Final client config
+  client_config:
+    description: 'YAML client configuration for Hive'
+    value: ${{ steps.client_config.outputs.config }}
+
+runs:
+  using: 'composite'
+  steps:
+    - id: validate
+      shell: bash
+      run: |
+        # Validate client_source input
+        if [ "${{ inputs.client_source }}" != "git" ] && [ "${{ inputs.client_source }}" != "docker" ]; then
+          echo "Error: client_source must be either 'git' or 'docker', got '${{ inputs.client_source }}'"
+          exit 1
+        fi
+
+    - id: parse_common
+      shell: bash
+      run: |
+        # Parse hive repo and tag
+        HIVE_DEFAULT="ethereum/hive@master"
+        HIVE_VERSION='${{ inputs.hive_version }}'
+        echo "hive_repo=$(echo ${HIVE_VERSION:-$HIVE_DEFAULT} | cut -d@ -f1)" >> $GITHUB_OUTPUT
+        echo "hive_tag=$(echo ${HIVE_VERSION:-$HIVE_DEFAULT} | cut -d@ -f2)" >> $GITHUB_OUTPUT
+
+        # Inform when common client tag is set
+        COMMON_CLIENT_TAG='${{ inputs.common_client_tag }}'
+        if [ -n "$COMMON_CLIENT_TAG" ]; then
+          echo "Common client tag is set to: $COMMON_CLIENT_TAG"
+          echo "This tag will be used for all clients, overriding individual tags"
+        fi
+
+    - id: parse_git
+      if: inputs.client_source == 'git'
+      shell: bash
+      run: |
+        # Define client configurations
+        declare -A CLIENT_DEFAULTS=(
+          ["geth"]="ethereum/go-ethereum@master"
+          ["besu"]="hyperledger/besu@main"
+          ["reth"]="paradigmxyz/reth@main"
+          ["nethermind"]="NethermindEth/nethermind@master"
+          ["erigon"]="erigontech/erigon@main"
+          ["nimbusel"]="status-im/nimbus-eth1@master"
+        )
+
+        CLIENT_VERSIONS='${{ inputs.client_repos }}'
+        COMMON_CLIENT_TAG='${{ inputs.common_client_tag }}'
+
+        # Process each client for git
+        for client in "${!CLIENT_DEFAULTS[@]}"; do
+          # Parse client version
+          if [ -n "$CLIENT_VERSIONS" ]; then
+            client_version=$(echo "$CLIENT_VERSIONS" | jq -r ".${client} // \"${CLIENT_DEFAULTS[$client]}\"")
+          else
+            client_version="${CLIENT_DEFAULTS[$client]}"
+          fi
+
+          # Extract repo and tag from version
+          echo "${client}_repo=$(echo ${client_version} | cut -d@ -f1)" >> $GITHUB_OUTPUT
+          if [ -n "$COMMON_CLIENT_TAG" ]; then
+            echo "${client}_tag=${COMMON_CLIENT_TAG}" >> $GITHUB_OUTPUT
+          else
+            echo "${client}_tag=$(echo ${client_version} | cut -d@ -f2)" >> $GITHUB_OUTPUT
+          fi
+        done
+
+    - id: parse_docker
+      if: inputs.client_source == 'docker'
+      shell: bash
+      run: |
+        # Define client docker image defaults
+        declare -A CLIENT_IMAGE_DEFAULTS=(
+          ["geth"]="docker.ethquokkaops.io/dh/ethpandaops/geth:master"
+          ["besu"]="docker.ethquokkaops.io/dh/ethpandaops/besu:main"
+          ["reth"]="docker.ethquokkaops.io/dh/ethpandaops/reth:main"
+          ["nethermind"]="docker.ethquokkaops.io/dh/ethpandaops/nethermind:master"
+          ["erigon"]="docker.ethquokkaops.io/dh/ethpandaops/erigon:main"
+          ["nimbusel"]="docker.ethquokkaops.io/dh/ethpandaops/nimbus-eth1:master"
+        )
+
+        CLIENT_IMAGES='${{ inputs.client_images }}'
+        COMMON_CLIENT_TAG='${{ inputs.common_client_tag }}'
+
+        # Process each client for docker
+        for client in "${!CLIENT_IMAGE_DEFAULTS[@]}"; do
+          # Parse client docker image
+          if [ -n "$CLIENT_IMAGES" ]; then
+            client_image=$(echo "$CLIENT_IMAGES" | jq -r ".${client} // \"${CLIENT_IMAGE_DEFAULTS[$client]}\"")
+          else
+            client_image="${CLIENT_IMAGE_DEFAULTS[$client]}"
+          fi
+
+          # Extract registry and tag from docker image
+          echo "${client}_docker_registry=$(echo ${client_image} | cut -d: -f1)" >> $GITHUB_OUTPUT
+          if [ -n "$COMMON_CLIENT_TAG" ]; then
+            echo "${client}_docker_tag=${COMMON_CLIENT_TAG}" >> $GITHUB_OUTPUT
+          else
+            echo "${client}_docker_tag=$(echo ${client_image} | cut -d: -f2)" >> $GITHUB_OUTPUT
+          fi
+        done
+
+    - id: client_config_git
+      if: inputs.client_source == 'git'
+      shell: bash
+      run: |
+        # Generate git client config
+        cat << 'EOF' >> $GITHUB_OUTPUT
+        config<<ENDCONFIG
+        - client: go-ethereum
+          nametag: default
+          dockerfile: git
+          build_args:
+            github: ${{ steps.parse_git.outputs.geth_repo }}
+            tag: ${{ steps.parse_git.outputs.geth_tag }}
+            GOPROXY: ${{ inputs.goproxy }}
+        - client: besu
+          nametag: default
+          dockerfile: git
+          build_args:
+            github: ${{ steps.parse_git.outputs.besu_repo }}
+            tag: ${{ steps.parse_git.outputs.besu_tag }}
+        - client: reth
+          nametag: default
+          dockerfile: git
+          build_args:
+            github: ${{ steps.parse_git.outputs.reth_repo }}
+            tag: ${{ steps.parse_git.outputs.reth_tag }}
+        - client: nethermind
+          nametag: default
+          dockerfile: git
+          build_args:
+            github: ${{ steps.parse_git.outputs.nethermind_repo }}
+            tag: ${{ steps.parse_git.outputs.nethermind_tag }}
+        - client: erigon
+          nametag: default
+          dockerfile: git
+          build_args:
+            github: ${{ steps.parse_git.outputs.erigon_repo }}
+            tag: ${{ steps.parse_git.outputs.erigon_tag }}
+            GOPROXY: ${{ inputs.goproxy }}
+        - client: nimbus-el
+          nametag: default
+          dockerfile: git
+          build_args:
+            github: ${{ steps.parse_git.outputs.nimbusel_repo }}
+            tag: ${{ steps.parse_git.outputs.nimbusel_tag }}
+        ENDCONFIG
+        EOF
+
+    - id: client_config_docker
+      if: inputs.client_source == 'docker'
+      shell: bash
+      run: |
+        # Generate docker client config
+        cat << 'EOF' >> $GITHUB_OUTPUT
+        config<<ENDCONFIG
+        - client: go-ethereum
+          nametag: default
+          build_args:
+            baseimage: ${{ steps.parse_docker.outputs.geth_docker_registry }}
+            tag: ${{ steps.parse_docker.outputs.geth_docker_tag }}
+        - client: besu
+          nametag: default
+          build_args:
+            baseimage: ${{ steps.parse_docker.outputs.besu_docker_registry }}
+            tag: ${{ steps.parse_docker.outputs.besu_docker_tag }}
+        - client: reth
+          nametag: default
+          build_args:
+            baseimage: ${{ steps.parse_docker.outputs.reth_docker_registry }}
+            tag: ${{ steps.parse_docker.outputs.reth_docker_tag }}
+        - client: nethermind
+          nametag: default
+          build_args:
+            baseimage: ${{ steps.parse_docker.outputs.nethermind_docker_registry }}
+            tag: ${{ steps.parse_docker.outputs.nethermind_docker_tag }}
+        - client: erigon
+          nametag: default
+          build_args:
+            baseimage: ${{ steps.parse_docker.outputs.erigon_docker_registry }}
+            tag: ${{ steps.parse_docker.outputs.erigon_docker_tag }}
+        - client: nimbus-el
+          nametag: default
+          build_args:
+            baseimage: ${{ steps.parse_docker.outputs.nimbusel_docker_registry }}
+            tag: ${{ steps.parse_docker.outputs.nimbusel_docker_tag }}
+        ENDCONFIG
+        EOF
+
+    - id: client_config
+      shell: bash
+      run: |
+        # Generate client config based on client_source
+        if [ "${{ inputs.client_source }}" = "docker" ]; then
+          CONFIG="${{ steps.client_config_docker.outputs.config }}"
+        else
+          CONFIG="${{ steps.client_config_git.outputs.config }}"
+        fi
+
+        cat << 'EOF' >> $GITHUB_OUTPUT
+        config<<ENDCONFIG
+        ${CONFIG}
+        ENDCONFIG
+        EOF
