@@ -2,6 +2,8 @@ name: Test Client Config Helper
 
 on:
   push:
+    branches:
+      - master
     paths:
       - 'helpers/client-config/**'
       - '.github/workflows/test-client-config.yaml'
@@ -346,6 +348,10 @@ jobs:
         run: |
           echo "Testing all supported clients..."
 
+          # Debug: Print the raw JSON to see what's going on
+          echo "Raw JSON output:"
+          echo "${{ toJson(steps.test_all_clients.outputs) }}"
+
           # Test all clients have outputs
           clients=("geth" "besu" "reth" "nethermind" "erigon" "nimbusel")
 
@@ -354,16 +360,43 @@ jobs:
             tag_var="${client}_tag"
 
             echo "Testing ${client}..."
-            repo_value=$(echo "${{ toJson(steps.test_all_clients.outputs) }}" | jq -r --arg key "$repo_var" '.[$key]')
-            tag_value=$(echo "${{ toJson(steps.test_all_clients.outputs) }}" | jq -r --arg key "$tag_var" '.[$key]')
+            echo "Looking for keys: $repo_var, $tag_var"
 
-            if [[ "$repo_value" == "null" || "$repo_value" == "" ]]; then
-              echo "❌ ${client} repo is missing"
+            # Use direct GitHub Actions context instead of jq
+            case $client in
+              "geth")
+                repo_value="${{ steps.test_all_clients.outputs.geth_repo }}"
+                tag_value="${{ steps.test_all_clients.outputs.geth_tag }}"
+                ;;
+              "besu")
+                repo_value="${{ steps.test_all_clients.outputs.besu_repo }}"
+                tag_value="${{ steps.test_all_clients.outputs.besu_tag }}"
+                ;;
+              "reth")
+                repo_value="${{ steps.test_all_clients.outputs.reth_repo }}"
+                tag_value="${{ steps.test_all_clients.outputs.reth_tag }}"
+                ;;
+              "nethermind")
+                repo_value="${{ steps.test_all_clients.outputs.nethermind_repo }}"
+                tag_value="${{ steps.test_all_clients.outputs.nethermind_tag }}"
+                ;;
+              "erigon")
+                repo_value="${{ steps.test_all_clients.outputs.erigon_repo }}"
+                tag_value="${{ steps.test_all_clients.outputs.erigon_tag }}"
+                ;;
+              "nimbusel")
+                repo_value="${{ steps.test_all_clients.outputs.nimbusel_repo }}"
+                tag_value="${{ steps.test_all_clients.outputs.nimbusel_tag }}"
+                ;;
+            esac
+
+            if [[ -z "$repo_value" || "$repo_value" == "null" ]]; then
+              echo "❌ ${client} repo is missing: '$repo_value'"
               exit 1
             fi
 
-            if [[ "$tag_value" == "null" || "$tag_value" == "" ]]; then
-              echo "❌ ${client} tag is missing"
+            if [[ -z "$tag_value" || "$tag_value" == "null" ]]; then
+              echo "❌ ${client} tag is missing: '$tag_value'"
               exit 1
             fi
 
