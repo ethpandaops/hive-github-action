@@ -320,15 +320,13 @@ runs:
     - id: client_config
       shell: bash
       run: |
-        # Generate client config based on client_source
+        # Set the final client config based on client_source
         if [ "${{ inputs.client_source }}" = "docker" ]; then
-          CONFIG="${{ steps.client_config_docker.outputs.config }}"
+          echo "config<<ENDCONFIG" >> $GITHUB_OUTPUT
+          echo "${{ steps.client_config_docker.outputs.config }}" >> $GITHUB_OUTPUT
+          echo "ENDCONFIG" >> $GITHUB_OUTPUT
         else
-          CONFIG="${{ steps.client_config_git.outputs.config }}"
+          echo "config<<ENDCONFIG" >> $GITHUB_OUTPUT
+          echo "${{ steps.client_config_git.outputs.config }}" >> $GITHUB_OUTPUT
+          echo "ENDCONFIG" >> $GITHUB_OUTPUT
         fi
-
-        cat << 'EOF' >> $GITHUB_OUTPUT
-        config<<ENDCONFIG
-        ${CONFIG}
-        ENDCONFIG
-        EOF

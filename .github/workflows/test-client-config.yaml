@@ -354,8 +354,8 @@ jobs:
             tag_var="${client}_tag"
 
             echo "Testing ${client}..."
-            repo_value=$(echo "${{ toJson(steps.test_all_clients.outputs) }}" | jq -r ".${repo_var}")
-            tag_value=$(echo "${{ toJson(steps.test_all_clients.outputs) }}" | jq -r ".${tag_var}")
+            repo_value=$(echo "${{ toJson(steps.test_all_clients.outputs) }}" | jq -r --arg key "$repo_var" '.[$key]')
+            tag_value=$(echo "${{ toJson(steps.test_all_clients.outputs) }}" | jq -r --arg key "$tag_var" '.[$key]')
 
             if [[ "$repo_value" == "null" || "$repo_value" == "" ]]; then
               echo "❌ ${client} repo is missing"
