@@ -60,7 +60,7 @@ inputs:
     type: string
     default: ''
   s3_public_url:
-    description: 'Public URL prefix for Hive View. Used to generate links to detailed results in the summary.'
+    description: 'Public URL prefix for Hive UI. Used to generate links to detailed results in the summary.'
     required: false
     type: string
     default: ''
