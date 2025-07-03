@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.0](https://github.com/ethpandaops/hive-github-action/compare/v0.3.0...v0.4.0) (2025-07-03)
+
+
+### Features
+
+* add helpers/client-config ([#26](https://github.com/ethpandaops/hive-github-action/issues/26)) ([f19cb42](https://github.com/ethpandaops/hive-github-action/commit/f19cb4298e223decbb3183627b055a68739d348d))
+* change view prefix to match the new hive UI ([#28](https://github.com/ethpandaops/hive-github-action/issues/28)) ([6beac2b](https://github.com/ethpandaops/hive-github-action/commit/6beac2b5feade5a6142d00cc0de311680891a0b0))
+
 ## [0.3.0](https://github.com/ethpandaops/hive-github-action/compare/v0.2.0...v0.3.0) (2025-05-28)
 
 
