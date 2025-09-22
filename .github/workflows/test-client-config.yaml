@@ -353,7 +353,7 @@ jobs:
           echo "${{ toJson(steps.test_all_clients.outputs) }}"
 
           # Test all clients have outputs
-          clients=("geth" "besu" "reth" "nethermind" "erigon" "nimbusel")
+          clients=("geth" "besu" "reth" "nethermind" "erigon" "nimbusel", "ethrex")
 
           for client in "${clients[@]}"; do
             repo_var="${client}_repo"
@@ -387,6 +387,10 @@ jobs:
               "nimbusel")
                 repo_value="${{ steps.test_all_clients.outputs.nimbusel_repo }}"
                 tag_value="${{ steps.test_all_clients.outputs.nimbusel_tag }}"
+                ;;
+              "ethrex")
+                repo_value="${{ steps.test_all_clients.outputs.ethrex_repo }}"
+                tag_value="${{ steps.test_all_clients.outputs.ethrex_tag }}"
                 ;;
             esac
 
