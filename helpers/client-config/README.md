@@ -48,6 +48,7 @@ This composite action generates Hive client configuration based on input paramet
 - `nethermind_repo`, `nethermind_tag`: Nethermind repository and tag
 - `erigon_repo`, `erigon_tag`: Erigon repository and tag
 - `nimbusel_repo`, `nimbusel_tag`: Nimbus EL repository and tag
+- `ethrex_repo`, `ethrex_tag`: Ethrex repository and tag
 
 ### Docker Client Images
 - `geth_docker_registry`, `geth_docker_tag`: Go-Ethereum docker registry and tag
@@ -56,6 +57,7 @@ This composite action generates Hive client configuration based on input paramet
 - `nethermind_docker_registry`, `nethermind_docker_tag`: Nethermind docker registry and tag
 - `erigon_docker_registry`, `erigon_docker_tag`: Erigon docker registry and tag
 - `nimbusel_docker_registry`, `nimbusel_docker_tag`: Nimbus EL docker registry and tag
+- `ethrex_docker_registry`, `ethrex_docker_tag`: Ethrex docker registry and tag
 
 ### Final Configuration
 - `client_config`: YAML client configuration for Hive
@@ -75,3 +77,4 @@ This composite action generates Hive client configuration based on input paramet
 - `nethermind` (Nethermind)
 - `erigon` (Erigon)
 - `nimbusel` (Nimbus EL)
+- `ethrex` (Ethrex)

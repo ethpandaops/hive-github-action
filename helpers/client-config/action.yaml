@@ -12,7 +12,8 @@ inputs:
         "reth": "paradigmxyz/reth@main",
         "nethermind": "NethermindEth/nethermind@master",
         "erigon": "erigontech/erigon@main",
-        "nimbusel": "status-im/nimbus-eth1@master"
+        "nimbusel": "status-im/nimbus-eth1@master",
+        "ethrex": "lambdaclass/ethrex@main"
       }
   client_images:
     description: 'JSON object containing client docker images in format {"client": "registry:tag", ...}'
@@ -24,7 +25,8 @@ inputs:
         "reth": "docker.ethquokkaops.io/dh/ethpandaops/reth:main",
         "nethermind": "docker.ethquokkaops.io/dh/ethpandaops/nethermind:master",
         "erigon": "docker.ethquokkaops.io/dh/ethpandaops/erigon:main",
-        "nimbusel": "docker.ethquokkaops.io/dh/ethpandaops/nimbus-eth1:master"
+        "nimbusel": "docker.ethquokkaops.io/dh/ethpandaops/nimbus-eth1:master",
+        "ethrex": "ghcr.io/lambdaclass/ethrex:main"
       }
   common_client_tag:
     description: 'If provided, this tag will be used for all clients, overriding individual tags/branches'
@@ -89,6 +91,12 @@ outputs:
   nimbusel_tag:
     description: 'Nimbus EL tag'
     value: ${{ steps.parse_git.outputs.nimbusel_tag }}
+  ethrex_repo:
+    description: 'Ethrex repository'
+    value: ${{ steps.parse_git.outputs.ethrex_repo }}
+  ethrex_tag:
+    description: 'Ethrex tag'
+    value: ${{ steps.parse_git.outputs.ethrex_tag }}
   # Docker images for clients - registry and tag separated
   geth_docker_registry:
     description: 'Go-Ethereum docker registry'
@@ -126,6 +134,12 @@ outputs:
   nimbusel_docker_tag:
     description: 'Nimbus EL docker tag'
     value: ${{ steps.parse_docker.outputs.nimbusel_docker_tag }}
+  ethrex_docker_registry:
+    description: 'Ethrex docker registry'
+    value: ${{ steps.parse_docker.outputs.ethrex_docker_registry }}
+  ethrex_docker_tag:
+    description: 'Ethrex docker tag'
+    value: ${{ steps.parse_docker.outputs.ethrex_docker_tag }}
   # Final client config
   client_config:
     description: 'YAML client configuration for Hive'
@@ -171,6 +185,7 @@ runs:
           ["nethermind"]="NethermindEth/nethermind@master"
           ["erigon"]="erigontech/erigon@main"
           ["nimbusel"]="status-im/nimbus-eth1@master"
+          ["ethrex"]="lambdaclass/ethrex@main"
         )
 
         CLIENT_VERSIONS='${{ inputs.client_repos }}'
@@ -206,6 +221,7 @@ runs:
           ["nethermind"]="docker.ethquokkaops.io/dh/ethpandaops/nethermind:master"
           ["erigon"]="docker.ethquokkaops.io/dh/ethpandaops/erigon:main"
           ["nimbusel"]="docker.ethquokkaops.io/dh/ethpandaops/nimbus-eth1:master"
+          ["ethrex"]="ghcr.io/lambdaclass/ethrex:main"
         )
 
         CLIENT_IMAGES='${{ inputs.client_images }}'
@@ -274,6 +290,12 @@ runs:
           build_args:
             github: ${{ steps.parse_git.outputs.nimbusel_repo }}
             tag: ${{ steps.parse_git.outputs.nimbusel_tag }}
+        - client: ethrex
+          nametag: default
+          dockerfile: git
+          build_args:
+            github: ${{ steps.parse_git.outputs.ethrex_repo }}
+            tag: ${{ steps.parse_git.outputs.ethrex_tag }}
         ENDCONFIG
         EOF
 
@@ -314,6 +336,11 @@ runs:
           build_args:
             baseimage: ${{ steps.parse_docker.outputs.nimbusel_docker_registry }}
             tag: ${{ steps.parse_docker.outputs.nimbusel_docker_tag }}
+        - client: ethrex
+          nametag: default
+          build_args:
+            baseimage: ${{ steps.parse_docker.outputs.ethrex_docker_registry }}
+            tag: ${{ steps.parse_docker.outputs.ethrex_docker_tag }}
         ENDCONFIG
         EOF
 
