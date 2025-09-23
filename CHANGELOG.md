@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://github.com/ethpandaops/hive-github-action/compare/v0.4.0...v0.5.0) (2025-09-23)
+
+
+### Features
+
+* add ethrex execution client. ([#29](https://github.com/ethpandaops/hive-github-action/issues/29)) ([43d9b3a](https://github.com/ethpandaops/hive-github-action/commit/43d9b3a99b0448e5e36c37a98c095a74a2c760f8))
+
 ## [0.4.0](https://github.com/ethpandaops/hive-github-action/compare/v0.3.0...v0.4.0) (2025-07-03)
 
 
