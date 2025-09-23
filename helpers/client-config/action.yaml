@@ -25,7 +25,7 @@ inputs:
         "reth": "docker.ethquokkaops.io/dh/ethpandaops/reth:main",
         "nethermind": "docker.ethquokkaops.io/dh/ethpandaops/nethermind:master",
         "erigon": "docker.ethquokkaops.io/dh/ethpandaops/erigon:main",
-        "nimbusel": "docker.ethquokkaops.io/dh/ethpandaops/nimbus-eth1:master"
+        "nimbusel": "docker.ethquokkaops.io/dh/ethpandaops/nimbus-eth1:master",
         "ethrex": "ghcr.io/lambdaclass/ethrex:main"
       }
   common_client_tag:
