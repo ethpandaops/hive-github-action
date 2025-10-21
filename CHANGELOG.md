@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0](https://github.com/ethpandaops/hive-github-action/compare/v0.5.0...v0.6.0) (2025-10-21)
+
+
+### Features
+
+* add input to allow disabling index generation ([#33](https://github.com/ethpandaops/hive-github-action/issues/33)) ([47482a8](https://github.com/ethpandaops/hive-github-action/commit/47482a80c6507c4145fadfc9b04f7134ab439309))
+
 ## [0.5.0](https://github.com/ethpandaops/hive-github-action/compare/v0.4.0...v0.5.0) (2025-09-23)
 
 
