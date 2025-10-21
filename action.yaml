@@ -9,41 +9,33 @@ inputs:
   simulator:
     description: 'Simulator to run (e.g. ethereum/sync)'
     required: true
-    type: string
     default: 'ethereum/sync'
   client:
     description: 'Client to test'
     required: true
-    type: string
     default: 'go-ethereum'
   client_config:
     description: 'Client configuration in YAML format'
     required: false
-    type: string
   extra_flags:
     description: 'Additional flags for hive'
     required: false
-    type: string
   skip_tests:
     description: 'Skip tests. Useful when used together with input.website_upload = "true" to upload the website without running tests.'
     required: false
-    type: string
     default: 'false'
   # Hive configuration
   hive_repository:
     description: 'Hive repository to use'
     required: false
-    type: string
     default: 'ethereum/hive'
   hive_version:
     description: 'Hive version/branch to use'
     required: false
-    type: string
     default: 'master'
   go_version:
     description: 'Go version used to build hive'
     required: false
-    type: string
     default: '1.24'
   ## S3 upload using rclone
   s3_upload:
@@ -53,26 +45,21 @@ inputs:
   s3_bucket:
     description: 'S3 bucket name'
     required: false
-    type: string
   s3_path:
     description: 'Path prefix in S3 bucket'
     required: false
-    type: string
     default: ''
   s3_public_url:
     description: 'Public URL prefix for Hive UI. Used to generate links to detailed results in the summary.'
     required: false
-    type: string
     default: ''
   rclone_config:
     description: 'Rclone config file'
     required: false
-    type: string
     default: '' # Should be base64 encoded. Example: base64 -w 0 rclone.conf
   rclone_version:
     description: 'Rclone version to use'
     required: false
-    type: string
     default: 'latest'
   website_upload:
     description: 'Upload Hive View website to S3'
@@ -81,7 +68,6 @@ inputs:
   website_listing_limit:
     description: 'Limit the number of listings to generate for the website index'
     required: false
-    type: string
     default: '2000'
   website_index_generation:
     description: '(Re)generate the test results index for the website'
@@ -95,7 +81,6 @@ inputs:
   workflow_artifact_prefix:
     description: 'Prefix for the workflow artifacts. If not provided, the prefix will be the simulator and client name.'
     required: false
-    type: string
     default: ''
 
 runs:
