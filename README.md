@@ -44,6 +44,7 @@ Here are some examples of how this action is used in other repositories:
 | `rclone_config` | Base64 encoded rclone config file | No | - |
 | `website_upload` | Upload Hive View website | No | `true` |
 | `website_listing_limit` | The amount of listings to generate for the website index | No | `2000` |
+| `website_index_generation` | (Re)generate the test results index for the website | No | `true` |
 
 *Required if `s3_upload` is `true`
 

@@ -83,6 +83,10 @@ inputs:
     required: false
     type: string
     default: '2000'
+  website_index_generation:
+    description: '(Re)generate the test results index for the website'
+    required: false
+    default: 'true'
   # Workflow artifact upload
   workflow_artifact_upload:
     description: 'Upload test results as an workflow artifact'
@@ -217,7 +221,12 @@ runs:
         rclone copy --no-traverse hive-www s3:${{ inputs.s3_bucket }}/${{ inputs.s3_path }}
 
     - name: Update hive view index and upload to S3
-      if: ${{ inputs.s3_upload == 'true' && env.RUN_SUCCESS == 'true' }}
+      if: >-
+        ${{
+          inputs.s3_upload == 'true' &&
+          env.RUN_SUCCESS == 'true' &&
+          inputs.website_index_generation == 'true'
+        }}
       working-directory: ./src
       shell: bash
       run: |
