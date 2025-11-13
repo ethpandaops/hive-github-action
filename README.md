@@ -31,7 +31,7 @@ Here are some examples of how this action is used in other repositories:
 |-------|-------------|----------|---------|
 | `hive_repository` | Hive repository to use | No | `ethereum/hive` |
 | `hive_version` | Hive version/branch to use | No | `master` |
-| `go_version` | Go version used to build hive | No | `1.21` |
+| `go_version` | Go version used to build hive | No | `1.24` |
 
 ### S3 Upload Configuration
 
