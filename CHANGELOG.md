@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.6.0](https://github.com/ethpandaops/hive-github-action/compare/v0.5.0...v0.6.0) (2025-11-13)
+
+
+### Features
+
+* add input to allow disabling index generation ([#33](https://github.com/ethpandaops/hive-github-action/issues/33)) ([47482a8](https://github.com/ethpandaops/hive-github-action/commit/47482a80c6507c4145fadfc9b04f7134ab439309))
+* allow setting docker version to be installed ([#37](https://github.com/ethpandaops/hive-github-action/issues/37)) ([0975921](https://github.com/ethpandaops/hive-github-action/commit/0975921c6b8575659d25f3aa0404d9ff78f91b75))
+
+
+### Bug Fixes
+
+* update correct go version on readme ([#38](https://github.com/ethpandaops/hive-github-action/issues/38)) ([0bdcce8](https://github.com/ethpandaops/hive-github-action/commit/0bdcce87081c7f0f1efa1098b8aef9753b3ac8b0))
+
 ## [0.5.0](https://github.com/ethpandaops/hive-github-action/compare/v0.4.0...v0.5.0) (2025-09-23)
 
 
