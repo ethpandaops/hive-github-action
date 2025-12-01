@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.1](https://github.com/ethpandaops/hive-github-action/compare/v0.6.0...v0.6.1) (2025-12-01)
+
+
+### Bug Fixes
+
+* add step to restart Docker for iptables bug ([#40](https://github.com/ethpandaops/hive-github-action/issues/40)) ([c4eda15](https://github.com/ethpandaops/hive-github-action/commit/c4eda15504a0d12f47534bab0e2d0b0e754aa5ea))
+
 ## [0.6.0](https://github.com/ethpandaops/hive-github-action/compare/v0.5.0...v0.6.0) (2025-11-13)
 
 
