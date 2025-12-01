@@ -102,6 +102,7 @@ runs:
         version: ${{ inputs.docker_version }}
 
     - name: Restart docker (iptables bug)
+      shell: bash
       run: sudo systemctl restart docker
 
     - name: Checkout hive
