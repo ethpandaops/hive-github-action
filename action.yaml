@@ -101,7 +101,7 @@ runs:
       with:
         version: ${{ inputs.docker_version }}
 
-    - name: Restart docker (iptables bug)
+    - name: Restart docker (iptables bug) # https://github.com/ethpandaops/hive-github-action/pull/40
       shell: bash
       run: sudo systemctl restart docker
 
