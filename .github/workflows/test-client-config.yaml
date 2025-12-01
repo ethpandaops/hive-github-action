@@ -18,7 +18,7 @@ jobs:
     name: Test Git Source with Defaults
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
 
       - name: Test git source with defaults
         uses: ./helpers/client-config
@@ -60,7 +60,7 @@ jobs:
     name: Test Docker Source with Defaults
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
 
       - name: Test docker source with defaults
         uses: ./helpers/client-config
@@ -90,7 +90,7 @@ jobs:
     name: Test Custom Git Versions
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
 
       - name: Test custom git versions
         uses: ./helpers/client-config
@@ -139,7 +139,7 @@ jobs:
     name: Test Custom Docker Images
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
 
       - name: Test custom docker images
         uses: ./helpers/client-config
@@ -181,7 +181,7 @@ jobs:
     name: Test Common Client Tag Override (Git)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
 
       - name: Test common client tag with git
         uses: ./helpers/client-config
@@ -217,7 +217,7 @@ jobs:
     name: Test Common Client Tag Override (Docker)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
 
       - name: Test common client tag with docker
         uses: ./helpers/client-config
@@ -253,7 +253,7 @@ jobs:
     name: Test Client Config YAML Output (Git)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
 
       - name: Test client config git output
         uses: ./helpers/client-config
@@ -283,7 +283,7 @@ jobs:
     name: Test Client Config YAML Output (Docker)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
 
       - name: Test client config docker output
         uses: ./helpers/client-config
@@ -311,7 +311,7 @@ jobs:
     name: Test Invalid Client Source
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
 
       - name: Test invalid client source
         uses: ./helpers/client-config
@@ -336,7 +336,7 @@ jobs:
     name: Test All Supported Clients
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
 
       - name: Test all clients
         uses: ./helpers/client-config
