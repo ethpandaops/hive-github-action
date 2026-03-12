@@ -91,13 +91,13 @@ runs:
   using: 'composite'
   steps:
     - name: Install go
-      uses: actions/setup-go@4dc6199c7b1a012772edbd06daecab0f50c9053c # v6.1.0
+      uses: actions/setup-go@7a3fe6cf4cb3a834922a1244abfce67bcef6a0c5 # v6.2.0
       with:
         go-version: ${{ inputs.go_version }}
         cache: false
 
     - name: Install docker
-      uses: docker/setup-docker-action@e61617a16c407a86262fb923c35a616ddbe070b3 # v4.6.0
+      uses: docker/setup-docker-action@e43656e248c0bd0647d3f5c195d116aacf6fcaf4 # v4.7.0
       with:
         version: ${{ inputs.docker_version }}
 
@@ -106,7 +106,7 @@ runs:
       run: sudo systemctl restart docker
 
     - name: Checkout hive
-      uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       with:
         repository: ${{ inputs.hive_repository }}
         ref: ${{ inputs.hive_version }}
@@ -178,21 +178,21 @@ runs:
 
     - name: Upload test results as workflow artifact
       if: ${{ inputs.workflow_artifact_upload == 'true' && inputs.skip_tests != 'true' }}
-      uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+      uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
       with:
         name: ${{ env.WORKFLOW_ARTIFACT_PREFIX }}-results.zip
         path: src/results
 
     - name: Upload client config as workflow artifact
       if: ${{ inputs.workflow_artifact_upload == 'true' && inputs.client_config != '' && inputs.skip_tests != 'true' }}
-      uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+      uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
       with:
         name: ${{ env.WORKFLOW_ARTIFACT_PREFIX }}-client-config.yaml
         path: src/client-config.yaml
 
     - name: Setup Rclone for S3 upload
       if: ${{ inputs.s3_upload == 'true' && env.RUN_SUCCESS == 'true' }}
-      uses: AnimMouse/setup-rclone@0d99fa3878a334d3e307c1a8372ad55550fdaea7 # v1.11.0
+      uses: AnimMouse/setup-rclone@26ef2133e09fd383329a1d4c1fbe6a71db1976c9 # v1.12.0
       with:
         rclone_config: ${{ inputs.rclone_config }}
         version: ${{ inputs.rclone_version }}
