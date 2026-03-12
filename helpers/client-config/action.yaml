@@ -8,7 +8,7 @@ inputs:
     default: |
       {
         "geth": "ethereum/go-ethereum@master",
-        "besu": "hyperledger/besu@main",
+        "besu": "besu-eth/besu@main",
         "reth": "paradigmxyz/reth@main",
         "nethermind": "NethermindEth/nethermind@master",
         "erigon": "erigontech/erigon@main",
@@ -180,7 +180,7 @@ runs:
         # Define client configurations
         declare -A CLIENT_DEFAULTS=(
           ["geth"]="ethereum/go-ethereum@master"
-          ["besu"]="hyperledger/besu@main"
+          ["besu"]="besu-eth/besu@main"
           ["reth"]="paradigmxyz/reth@main"
           ["nethermind"]="NethermindEth/nethermind@master"
           ["erigon"]="erigontech/erigon@main"

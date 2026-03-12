@@ -45,7 +45,7 @@ jobs:
           # Test besu outputs
           echo "Besu repo: ${{ steps.test_git_defaults.outputs.besu_repo }}"
           echo "Besu tag: ${{ steps.test_git_defaults.outputs.besu_tag }}"
-          [[ "${{ steps.test_git_defaults.outputs.besu_repo }}" == "hyperledger/besu" ]] || exit 1
+          [[ "${{ steps.test_git_defaults.outputs.besu_repo }}" == "besu-eth/besu" ]] || exit 1
           [[ "${{ steps.test_git_defaults.outputs.besu_tag }}" == "main" ]] || exit 1
 
           # Test reth outputs
@@ -100,7 +100,7 @@ jobs:
           client_repos: |
             {
               "geth": "ethereum/go-ethereum@v1.13.0",
-              "besu": "hyperledger/besu@23.7.0",
+              "besu": "besu-eth/besu@23.7.0",
               "reth": "paradigmxyz/reth@v0.1.0"
             }
           hive_version: "ethereum/hive@v1.10.0"
@@ -124,7 +124,7 @@ jobs:
           # Test custom besu version
           echo "Besu repo: ${{ steps.test_custom_git.outputs.besu_repo }}"
           echo "Besu tag: ${{ steps.test_custom_git.outputs.besu_tag }}"
-          [[ "${{ steps.test_custom_git.outputs.besu_repo }}" == "hyperledger/besu" ]] || exit 1
+          [[ "${{ steps.test_custom_git.outputs.besu_repo }}" == "besu-eth/besu" ]] || exit 1
           [[ "${{ steps.test_custom_git.outputs.besu_tag }}" == "23.7.0" ]] || exit 1
 
           # Test custom reth version
@@ -149,7 +149,7 @@ jobs:
           client_images: |
             {
               "geth": "ethereum/client-go:v1.13.0",
-              "besu": "hyperledger/besu:23.7.0",
+              "besu": "besu-eth/besu:23.7.0",
               "reth": "ghcr.io/paradigmxyz/reth:v0.1.0"
             }
 
@@ -166,7 +166,7 @@ jobs:
           # Test custom besu image
           echo "Besu docker registry: ${{ steps.test_custom_docker.outputs.besu_docker_registry }}"
           echo "Besu docker tag: ${{ steps.test_custom_docker.outputs.besu_docker_tag }}"
-          [[ "${{ steps.test_custom_docker.outputs.besu_docker_registry }}" == "hyperledger/besu" ]] || exit 1
+          [[ "${{ steps.test_custom_docker.outputs.besu_docker_registry }}" == "besu-eth/besu" ]] || exit 1
           [[ "${{ steps.test_custom_docker.outputs.besu_docker_tag }}" == "23.7.0" ]] || exit 1
 
           # Test custom reth image
@@ -192,7 +192,7 @@ jobs:
           client_repos: |
             {
               "geth": "ethereum/go-ethereum@v1.13.0",
-              "besu": "hyperledger/besu@23.7.0"
+              "besu": "besu-eth/besu@23.7.0"
             }
 
       - name: Verify common tag override git
@@ -209,7 +209,7 @@ jobs:
           echo "Geth repo: ${{ steps.test_common_tag_git.outputs.geth_repo }}"
           echo "Besu repo: ${{ steps.test_common_tag_git.outputs.besu_repo }}"
           [[ "${{ steps.test_common_tag_git.outputs.geth_repo }}" == "ethereum/go-ethereum" ]] || exit 1
-          [[ "${{ steps.test_common_tag_git.outputs.besu_repo }}" == "hyperledger/besu" ]] || exit 1
+          [[ "${{ steps.test_common_tag_git.outputs.besu_repo }}" == "besu-eth/besu" ]] || exit 1
 
           echo "✅ Common client tag git test passed"
 
@@ -228,7 +228,7 @@ jobs:
           client_images: |
             {
               "geth": "ethereum/client-go:v1.13.0",
-              "besu": "hyperledger/besu:23.7.0"
+              "besu": "besu-eth/besu:23.7.0"
             }
 
       - name: Verify common tag override docker
@@ -245,7 +245,7 @@ jobs:
           echo "Geth docker registry: ${{ steps.test_common_tag_docker.outputs.geth_docker_registry }}"
           echo "Besu docker registry: ${{ steps.test_common_tag_docker.outputs.besu_docker_registry }}"
           [[ "${{ steps.test_common_tag_docker.outputs.geth_docker_registry }}" == "ethereum/client-go" ]] || exit 1
-          [[ "${{ steps.test_common_tag_docker.outputs.besu_docker_registry }}" == "hyperledger/besu" ]] || exit 1
+          [[ "${{ steps.test_common_tag_docker.outputs.besu_docker_registry }}" == "besu-eth/besu" ]] || exit 1
 
           echo "✅ Common client tag docker test passed"
 

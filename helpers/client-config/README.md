@@ -11,7 +11,7 @@ This composite action generates Hive client configuration based on input paramet
     client_repos: |
       {
         "geth": "ethereum/go-ethereum@master",
-        "besu": "hyperledger/besu@main",
+        "besu": "besu-eth/besu@main",
         "reth": "paradigmxyz/reth@main"
       }
     client_images: |
