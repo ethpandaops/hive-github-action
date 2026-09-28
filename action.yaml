@@ -163,7 +163,7 @@ runs:
         echo "Tests were skipped"
 
     - name: Set artifact name
-      if: ${{ inputs.workflow_artifact_upload == 'true' && inputs.skip_tests != 'true' }}
+      if: ${{ !cancelled() && inputs.workflow_artifact_upload == 'true' && inputs.skip_tests != 'true' }}
       shell: bash
       run: |
         if [ -n "${{ inputs.workflow_artifact_prefix }}" ]; then
@@ -177,14 +177,14 @@ runs:
         fi
 
     - name: Upload test results as workflow artifact
-      if: ${{ inputs.workflow_artifact_upload == 'true' && inputs.skip_tests != 'true' }}
+      if: ${{ !cancelled() && inputs.workflow_artifact_upload == 'true' && inputs.skip_tests != 'true' }}
       uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
       with:
         name: ${{ env.WORKFLOW_ARTIFACT_PREFIX }}-results.zip
         path: src/results
 
     - name: Upload client config as workflow artifact
-      if: ${{ inputs.workflow_artifact_upload == 'true' && inputs.client_config != '' && inputs.skip_tests != 'true' }}
+      if: ${{ !cancelled() && inputs.workflow_artifact_upload == 'true' && inputs.client_config != '' && inputs.skip_tests != 'true' }}
       uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
       with:
         name: ${{ env.WORKFLOW_ARTIFACT_PREFIX }}-client-config.yaml
