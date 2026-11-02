@@ -33,6 +33,10 @@ Here are some examples of how this action is used in other repositories:
 | `hive_version` | Hive version/branch to use | No | `master` |
 | `go_version` | Go version used to build hive | No | `1.24` |
 | `docker_version` | Docker version to use | No | `latest` |
+| `container_runtime` | OCI runtime for the containers hive starts: `runc` (Docker's default) or `crun`, which is installed and made the default runtime of the system Docker daemon that hive uses | No | `runc` |
+| `crun_version` | crun release to install when `container_runtime` is `crun`; change it together with the two checksums below | No | `1.30.1` |
+| `crun_sha256_amd64` | SHA-256 of that version's amd64 static binary | No | checksum of 1.30.1 |
+| `crun_sha256_arm64` | SHA-256 of that version's arm64 static binary | No | checksum of 1.30.1 |
 
 ### S3 Upload Configuration
 
